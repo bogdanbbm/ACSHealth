@@ -1,46 +1,43 @@
-import logo from './logo.svg';
 import './App.css';
-import React, { useState } from 'react';
-import axios from 'axios';
+import React, {Component} from 'react';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link
+} from 'react-router-dom';
+import Home from "./component/home";
+import MedicalData from "./component/medicalData";
+import Appointments from "./component/appointments";
 
-function App() {
-  const [message, setMessage] = useState('');
+class App extends Component {
+  render() {
+    return (
 
-  const handleClick = async () => {
-    const response = await axios.get('http://localhost:5001');
-    console.log(response)
-    setMessage(response.data);
-  };
-  return (
+      <Router>
+        <div className="App">
+          <ul>
+            <li>
+              <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/medicalData">Medical Data</Link>
+            </li>
+            <li>
+              <Link to="/appointments">Appointments</Link>
+            </li>
+          </ul>
+          <Routes>
+            <Route exact path='/' element={<Home />}></Route>
+            <Route exact path='/medicalData' element={<MedicalData />}></Route>
+            <Route exact path='/appointments' element={<Appointments />}></Route>
+          </Routes>
+        </div>
+      </Router>
 
-
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <button onClick={handleClick}>Get Message</button>
-        <p>{message}</p>
-      </header>
-    </div>
-
-
-  );
-}
-
-function Button() {
-  const [message, setMessage] = useState('');
-
-  const handleClick = async () => {
-    const response = await axios.get('192.168.1.160:5000/');
-    setMessage(response.data);
-  };
-
-  return (
-    <div>
-      <button onClick={handleClick}>Get Message</button>
-      <p>{message}</p>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
-export { Button };
+
