@@ -5,9 +5,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 # Configure MySQL connection
-app.config['MYSQL_HOST'] = '192.168.1.161'
-app.config['MYSQL_USER'] = 'test'
-app.config['MYSQL_PASSWORD'] = 'testulescu'
+app.config['MYSQL_HOST'] = 'mysql-database'
+app.config['MYSQL_USER'] = 'prod'
+app.config['MYSQL_PASSWORD'] = 'something_encrypt3d'
 app.config['MYSQL_DB'] = 'ip'
 
 mysql = MySQL(app)
