@@ -31,6 +31,7 @@ function Register() {
   });
 
   const [isMedic, setIsMedic] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const onInputChange = e => {
     const { name, value } = e.target;
@@ -48,13 +49,17 @@ function Register() {
 
       switch (name) {
         case 'username':
-          if (value.length < 3) {
+          if (!value) {
+            stateObj[name] = 'Username is required';
+          } else if (value.length < 3) {
             stateObj[name] = 'Username must be at least 3 characters long';
           }
           break;
 
         case 'password':
-          if (!value.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
+          if (!value) {
+            stateObj[name] = 'Password is required';
+          } else if(!value.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/)) {
             stateObj[name] = 'Password must be at least 8 characters long and contain at least one letter and one number';
           } else if (input.confirmPassword && value !== input.confirmPassword) {
             stateObj['confirmPassword'] = 'Passwords do not match';
@@ -64,13 +69,17 @@ function Register() {
           break;
 
         case 'confirmPassword':
-          if (input.password && value !== input.password) {
+          if (!value) {
+            stateObj[name] = 'Confirm password is required';
+          } else if (input.password && value !== input.password) {
             stateObj[name] = 'Passwords do not match';
           }
           break;
 
         case 'email':
-          if (!value.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
+          if (!value) {
+            stateObj[name] = 'Email is required';
+          } else if (!value.match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)) {
             stateObj[name] = 'Invalid email';
           }
           break;
@@ -85,6 +94,13 @@ function Register() {
 
   const handleSubmit = async e => {
     e.preventDefault();
+    if (Object.values(error).some(err => err)) {
+      setSubmitError('All fields must be valid!');
+      return;
+    }
+
+    setSubmitError('');
+
     const token = await registerUser({
       email: input.email,
       username: input.username,
@@ -144,6 +160,7 @@ function Register() {
         </div>
         <div>
           <button type="submit">Register</button>
+          {submitError && <p className="err">{submitError}</p>}
         </div>
       </form>
     </div>
