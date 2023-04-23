@@ -6,11 +6,12 @@ import {
   Route,
   Link
 } from 'react-router-dom';
-import Home from './component/home/home';
-import MedicalData from './component/medicalData/medicalData';
-import Appointments from './component/appointments/appointments';
+import Home from './component/home/Home';
+import MedicalData from './component/medicalData/MedicalData';
+import Appointments from './component/appointments/Appointments';
 import Medics from './component/medics/Medics';
-import NotFound from './component/notFound';
+import NotFound from './component/NotFound';
+import Register from "./component/login/Register";
 
 class App extends Component {
   render() {
@@ -40,6 +41,7 @@ class App extends Component {
             <Route exact path="/medicalData" element={<MedicalData />}></Route>
             <Route exact path="/appointments" element={<Appointments />}></Route>
             <Route exact path="/medics" element={<Medics />}></Route>
+            <Route exact path="/register" element={<Register />}></Route>
             <Route path="*" element={<NotFound />}></Route>
           </Routes>
         </div>
