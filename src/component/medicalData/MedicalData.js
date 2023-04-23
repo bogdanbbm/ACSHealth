@@ -1,5 +1,5 @@
 import React from 'react';
-import useToken from "../../useToken";
+import useToken from "../../hooks/useToken";
 import Login from "../login/Login";
 
 function MedicalData() {

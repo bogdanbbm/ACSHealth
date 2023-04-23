@@ -1,7 +1,9 @@
+// noinspection JSCheckFunctionSignatures
+
 import React, {useState} from 'react';
 import './Login.css';
 import axios from "axios";
-import setToken from "../../useToken";
+import PropTypes from "prop-types";
 
 async function registerUser(credentials) {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -15,7 +17,7 @@ async function registerUser(credentials) {
     .catch(error => console.error(error));
 }
 
-function Register() {
+function Register({ setToken }) {
   const [input, setInput] = useState({
     username: '',
     password: '',
@@ -166,5 +168,9 @@ function Register() {
     </div>
   );
 }
+
+Register.propTypes = {
+  setToken: PropTypes.func.isRequired
+};
 
 export default Register;
