@@ -1,9 +1,10 @@
 CREATE TABLE LOGIN_DETAILS(
-    ID          int NOT NULL,
+    ID          int NOT NULL AUTO_INCREMENT,
     USERNAME    varchar(255),
     PASS_HASH   varchar(255),
     IS_MEDIC    varchar(1) DEFAULT 'N',
     MAIL_CHECK  varchar(1) DEFAULT 'N',
+    MAIL_UUID   varchar(255) DEFAULT 'N',
     PRIMARY KEY (ID)
 );
 CREATE TABLE MEDIC_DETAILS(
