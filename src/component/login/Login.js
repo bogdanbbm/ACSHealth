@@ -30,27 +30,27 @@ function Login({ setToken }) {
 
   return (
     <div className="login-wrapper">
-      <h1>You need to log in first</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input type="text" onChange={e => setUserName(e.target.value)} />
-        </label>
-        <label>
-          <p>Password</p>
-          <input type="password" onChange={e => setPassword(e.target.value)}/>
-        </label>
-        <div>
-          <button type="submit">Login</button>
-        </div>
-        <div>
-          <p>Don't have an account? </p>
-          <a href="/register">Register</a>
-        </div>
-      </form>
+      <div className="login-container">
+        <div className="login-header">You need to log in first</div>
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <input type="text" id="username" required onChange={e => setUserName(e.target.value)} />
+            <label for="username">Username</label>
+          </div>
+          <div className="field">
+            <input type="password" id="password" required onChange={e => setPassword(e.target.value)}/>
+            <label for="password">Password</label>
+          </div>
+          <div className="field">
+            <button type="submit">Login</button>
+          </div>
+          <div className="register-link">
+            <p>Don't have an account? </p>
+            <a href="/register">Register</a>
+          </div>
+        </form>
+      </div>
     </div>
-
-
   );
 }
 
