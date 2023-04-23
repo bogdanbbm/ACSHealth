@@ -2,7 +2,7 @@ from flask import Flask, request, abort
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from sys import stderr
-from email_module import compute_email, b64decode
+from email_module import compute_email
 from uuid import uuid4
 
 app = Flask(__name__)

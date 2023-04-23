@@ -1,7 +1,6 @@
 
 import smtplib
 from email.mime.text import MIMEText
-from base64 import b64encode, b64decode
 
 def send_email(subject, body, sender, recipients, password):
     """
@@ -16,12 +15,11 @@ def send_email(subject, body, sender, recipients, password):
     smtp_server.sendmail(sender, recipients, msg.as_string())
     smtp_server.quit()
 
-def compute_email(email, uuid, db_id):
+def compute_email(email, uuid):
     subject = "Verification email"
-    encoded_db_id = str(b64encode(str(db_id).encode('ascii')).decode())
     body = "Please verify your email for using acshealth (this is not phishing, trust us):\
           http://localhost:5000/register/{}"
-    body = body.format(encoded_db_id + "ñ" + str(uuid))
+    body = body.format(str(uuid))
     sender = "official.acshealth@gmail.com"
     recipients = [email]
     # TODO: get this from env
