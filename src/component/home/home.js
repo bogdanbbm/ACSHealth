@@ -1,14 +1,16 @@
-import logo from '../logo.svg';
-import '../App.css';
+import logo from '../../logo.svg';
+import '../../App.css';
 import React, { useState } from 'react';
 import axios from 'axios';
 
 function Home() {
   const [message, setMessage] = useState('');
 
+  const apiURL = process.env.REACT_APP_API_URL;
+
   const handleClick = async () => {
-    const response = await axios.get('http://localhost:5001');
-    console.log(response)
+    const response = await axios.get(apiURL);
+    console.log(response);
     setMessage(response.data);
   };
 
