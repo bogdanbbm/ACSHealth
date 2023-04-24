@@ -1,0 +1,122 @@
+.login-wrapper {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    font-family: popins, sans-serif;
+    box-sizing: border-box;
+    height: 90vh;
+    width: 100%;
+    place-items: center;
+    background: #f2f2f2;
+}
+
+.login-container {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-container .login-header {
+    font-size: 35px;
+    font-weight: 600;
+    text-align: center;
+    line-height: 100px;
+    color: #fff;
+    user-select: none;
+    border-radius: 15px 15px 0 0;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+}
+
+.login-container form {
+    padding: 10px 30px 50px 30px;
+}
+
+.login-container form .field {
+    height: 50px;
+    width: 100%;
+    margin-top: 20px;
+    position: relative;
+}
+
+.login-container form .field label {
+    position: absolute;
+    top: 50%;
+    left: 20px;
+    transform: translateY(-50%);
+    font-size: 17px;
+    font-weight: 400;
+    pointer-events: none;
+    color: #999999;
+    transition: all 0.3s ease;
+}
+
+.login-container form .field input {
+    height: 100%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.login-container form .field input:focus,
+.login-container form .field input:valid {
+    border-color: #4158d0;
+}
+
+.login-container form .field input:focus + label,
+.login-container form .field input:valid + label {
+    top: 0;
+    font-size: 16px;
+    color: #4158d0;
+    background: #fff;
+    transform: translateY(-50%);
+}
+
+.login-container form .field button[type="submit"] {
+    height: 50px;
+    width: 100%;
+    margin-top: 10px;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.login-container form .field button[type="submit"]:hover {
+    background: linear-gradient(-135deg, #4158d0, #c850c0);
+}
+
+.login-container form .field button[type="submit"]:active {
+    transform: scale(0.95);
+}
+
+.login-container form .register-link {
+    color: #262626;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.login-container form .register-link a {
+    color: #4158d0;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.login-container form .register-link a:hover {
+    text-decoration: underline;
+}
+
+.err {
+    margin: 4px 0 0 0;
+    font-size: 13px;
+    color: #e64646;
+}
