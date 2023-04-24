@@ -17,7 +17,7 @@ services:
 
   backend:
     image: docker.io/python:3.9.16
-    command: bash -c "pip3 install flask flask_mysqldb flask_cors; python3 /backend/backend.py"
+    command: bash -c "pip3 install flask flask_mysqldb flask_cors pyjwt; python3 /backend/backend.py"
     restart: unless-stopped
     volumes: 
       - ../backend_python:/backend

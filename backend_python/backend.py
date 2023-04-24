@@ -1,4 +1,6 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort, make_response, jsonify
+import jwt
+from datetime import datetime, timedelta
 from flask_mysqldb import MySQL
 from flask_cors import CORS
 from sys import stderr
@@ -121,7 +123,7 @@ def login():
             abort(404)
         cur = mysql.connection.cursor()
         query = """
-            SELECT *
+            SELECT IS_MEDIC, MAIL_CHECK
             FROM LOGIN_DETAILS
             WHERE USERNAME = {username} AND PASS_HASH = {pass_hash};
         """.format(
@@ -130,11 +132,24 @@ def login():
         )
         print(query, file=stderr)
         cur.execute(query)
-        if cur.fetchone() != None:
+        query_res = cur.fetchall()[0]
+        print(query_res, file=stderr)
+        if query_res != None:
+            if query_res[1] != 'Y':
+                print("Login failed", file=stderr)
+                cur.close()
+                return make_response({"message": "Login failed"}, 401)
             print("Login successful!", file=stderr)
+            token = jwt.encode({
+                'is_medic': int(query_res[0]),
+                'exp' : datetime.utcnow() + timedelta(minutes = 30)
+            }, "secret")
+            cur.close()
+            return make_response(jsonify({'token' : token}), 201)
         else:
             print("Login failed", file=stderr)
-        cur.close()
+            cur.close()
+            return make_response({"message": "Login failed"}, 401)
     return ""
 
 if __name__ == '__main__':

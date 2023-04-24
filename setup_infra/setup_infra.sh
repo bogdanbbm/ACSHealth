@@ -4,7 +4,7 @@ GREEN=$(tput setaf 2)
 
 # get the dev environment ready
 sudo apt-get install libmysqlclient-dev
-pip3 install flask flask_mysqldb flask_cors
+pip3 install flask flask_mysqldb flask_cors pyjwt
 
 # start containers
 docker compose up -d
