@@ -131,7 +131,7 @@ function Register({ setToken }) {
           </div>
           <div className="field">
             <input
-              id="email"
+              id="text"
               required
               type="email"
               name="email"
