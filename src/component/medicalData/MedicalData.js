@@ -12,6 +12,7 @@ function MedicalData() {
   return (
     <div>
       <h1>Medical Data</h1>
+      <p>test</p>
     </div>
   );
 }
