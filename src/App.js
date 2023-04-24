@@ -18,14 +18,14 @@ class App extends Component {
     return (
 
       <Router>
-        <div className="App">
+        <div className="navbar">
           <nav>
             <ul>
               <li>
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/medicalData">Medical Data</Link>
+                <Link to="/medicalData">Data</Link>
               </li>
               <li>
                 <Link to="/appointments">Appointments</Link>

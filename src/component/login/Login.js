@@ -31,7 +31,7 @@ function Login({ setToken }) {
   return (
     <div className="login-wrapper">
       <div className="login-container">
-        <div className="login-header">You need to log in first</div>
+        <div className="login-header">Login</div>
         <form onSubmit={handleSubmit}>
           <div className="field">
             <input type="text" id="username" required onChange={e => setUserName(e.target.value)} />

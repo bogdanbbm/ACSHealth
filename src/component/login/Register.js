@@ -114,57 +114,67 @@ function Register({ setToken }) {
 
   return (
     <div className="login-wrapper">
-      <h1>Register new account</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          <p>Username</p>
-          <input
-            type="text"
-            name="username"
-            value={input.username}
-            onChange={onInputChange}
-            onBlur={validateInput} />
-          {error.username && <p className="err">{error.username}</p>}
-        </label>
-        <label>
-          <p>Email</p>
-          <input
-            type="email"
-            name="email"
-            value={input.email}
-            onChange={onInputChange}
-            onBlur={validateInput} />
-          {error.email && <p className="err">{error.email}</p>}
-        </label>
-        <label>
-          <p>Password</p>
-          <input
-            type="password"
-            name="password"
-            value={input.password}
-            onChange={onInputChange}
-            onBlur={validateInput} />
-          {error.password && <p className="err">{error.password}</p>}
-        </label>
-        <label>
-          <p>Confirm Password</p>
-          <input
-            type="password"
-            name="confirmPassword"
-            value={input.confirmPassword}
-            onChange={onInputChange}
-            onBlur={validateInput} />
-          {error.confirmPassword && <p className="err">{error.confirmPassword}</p>}
-        </label>
-        <div>
-          <p>Are you registering as a medic?</p>
-          <input type="checkbox" onChange={e => setIsMedic(e.target.checked)} />
-        </div>
-        <div>
-          <button type="submit">Register</button>
-          {submitError && <p className="err">{submitError}</p>}
-        </div>
-      </form>
+      <div className="login-container">
+        <div className="login-header">Register</div>
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <input
+              type="text"
+              name="username"
+              id="username"
+              required
+              value={input.username}
+              onChange={onInputChange}
+              onBlur={validateInput} />
+            <label for="username">Username</label>
+            {error.username && <p className="err">{error.username}</p>}
+          </div>
+          <div className="field">
+            <input
+              id="email"
+              required
+              type="email"
+              name="email"
+              value={input.email}
+              onChange={onInputChange}
+              onBlur={validateInput} />
+            <label for="email">Email</label>
+            {error.email && <p className="err">{error.email}</p>}
+          </div>
+          <div className="field">
+            <input
+              id="password"
+              required
+              type="password"
+              name="password"
+              value={input.password}
+              onChange={onInputChange}
+              onBlur={validateInput} />
+            <label for="password">Password</label>
+            {error.password && <p className="err">{error.password}</p>}
+          </div>
+          <div className="field">
+            <input
+              id="confirmPassword"
+              required
+              type="password"
+              name="confirmPassword"
+              value={input.confirmPassword}
+              onChange={onInputChange}
+              onBlur={validateInput} />
+            <label for="confirmPassword">Confirm Password</label>
+            {error.confirmPassword && <p className="err">{error.confirmPassword}</p>}
+          </div>
+          <div className="checkbox">
+            <p>Are you registering as a medic?</p>
+            <input  type="checkbox" onChange={e => setIsMedic(e.target.checked)} />
+          </div>
+          <div className="field">
+            <button type="submit">Register</button>
+            {submitError && <p className="err">{submitError}</p>}
+          </div>
+        </form>
+      </div>
     </div>
   );
 }

@@ -4,10 +4,13 @@
     padding: 0;
     font-family: popins, sans-serif;
     box-sizing: border-box;
-    height: 90vh;
+    height: 120vh;
     width: 100%;
     place-items: center;
-    background: #f2f2f2;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
 }
 
 .login-container {
@@ -36,6 +39,8 @@
     height: 50px;
     width: 100%;
     margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
     position: relative;
 }
 
@@ -115,8 +120,56 @@
     text-decoration: underline;
 }
 
+.login-container form .checkbox {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: 30px;
+}
+
+.login-container form .checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    cursor: pointer;
+    margin-left: 20px;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    outline: none;
+    border: 1px solid #999999;
+    border-radius: 50%;
+}
+
+.login-container form .checkbox input[type="checkbox"]:checked {
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+}
+
+.login-container form .checkbox input[type="checkbox"]:checked::before {
+    content: "\2714";
+    font-size: 15px;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s ease;
+    align-items: center;
+}
+
+.login-container form .checkbox input[type="checkbox"]:active {
+    transform: scale(0.95);
+}
+
 .err {
-    margin: 4px 0 0 0;
+    margin: 2px 0 0 0;
     font-size: 13px;
     color: #e64646;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
 }
