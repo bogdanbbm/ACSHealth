@@ -73,8 +73,7 @@
 }
 
 .login-container form .field input:focus + label,
-.login-container form .field input:valid + label,
-.login-container form .field input[type="email"]:required:invalid:not(:empty) + label{
+.login-container form .field input:valid + label {
     top: 0;
     font-size: 16px;
     color: #4158d0;

@@ -119,9 +119,9 @@ function Register({ setToken }) {
         <form onSubmit={handleSubmit}>
           <div className="field">
             <input
+              id="username"
               type="text"
               name="username"
-              id="username"
               required
               value={input.username}
               onChange={onInputChange}
@@ -131,10 +131,10 @@ function Register({ setToken }) {
           </div>
           <div className="field">
             <input
-              id="text"
-              required
+              id="email"
               type="email"
               name="email"
+              required
               value={input.email}
               onChange={onInputChange}
               onBlur={validateInput} />
@@ -144,9 +144,9 @@ function Register({ setToken }) {
           <div className="field">
             <input
               id="password"
-              required
               type="password"
               name="password"
+              required
               value={input.password}
               onChange={onInputChange}
               onBlur={validateInput} />
@@ -156,9 +156,9 @@ function Register({ setToken }) {
           <div className="field">
             <input
               id="confirmPassword"
-              required
               type="password"
               name="confirmPassword"
+              required
               value={input.confirmPassword}
               onChange={onInputChange}
               onBlur={validateInput} />
