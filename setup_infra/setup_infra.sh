@@ -1,4 +1,3 @@
-#!/bin/bash
 
 GREEN=$(tput setaf 2)
 
