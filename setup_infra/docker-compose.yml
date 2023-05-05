@@ -1,0 +1,31 @@
+version: '3.3'
+
+services:
+  mysql:
+    image: docker.io/bitnami/mysql:8.0.33-debian-11-r0
+    restart: unless-stopped
+    container_name: mysql-database
+    volumes:
+      - data:/bitnami/mysql/data
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - MYSQL_USER=prod
+      - MYSQL_PASSWORD=something_encrypt3d
+      - MYSQL_DATABASE=ip
+    ports:
+      - '3306'
+
+  backend:
+    image: docker.io/python:3.9.16
+    command: bash -c "pip3 install flask flask_mysqldb flask_cors pyjwt; python3 /backend/backend.py"
+    restart: unless-stopped
+    volumes: 
+      - ../backend_python:/backend
+    container_name: backend-container
+    ports:
+      - '5000:5000'
+    links:
+      - mysql
+volumes:
+  data:
+    driver: local
