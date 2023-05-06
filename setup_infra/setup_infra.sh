@@ -18,5 +18,10 @@ docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"$
 # check that everything works
 docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC LOGIN_DETAILS;\""
 docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC MEDIC_DETAILS;\""
+docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC REVIEWS;\""
+docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC PERSONAL_DATA;\""
+docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC WEIGHT_HISTORY;\""
+docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC CONSULTATION_LIST;\""
+docker exec mysql-database bash -c "mysql -uprod -psomething_encrypt3d ip -e \"DESC BLOOD_DONATION;\""
 
 echo "${GREEN} Enjoy!"
