@@ -8,6 +8,7 @@ from email_module import compute_email
 from uuid import uuid4
 
 app = Flask(__name__)
+import all_data
 
 # Configure MySQL connection
 # TODO: get these from env
