@@ -49,6 +49,19 @@ def register():
     if data_received["username"] == "" or data_received["pass_hash"] == "":
         return make_response({"message": "Username or pass_hash empty"}, 400)
     cur = mysql.connection.cursor()
+    # check whether the username is taken or not
+    try:
+        cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
+                .format(data_received["username"]))
+    except Exception as e:
+        print(e, file=stderr)
+        cur.close()
+        return make_response({"message": "Db selection error"}, 500)
+    db_response = cur.fetchone()
+    if db_response is not None:
+        # it exists already
+        cur.close()
+        return make_response({"message": "Username already exists"}, 400)
     query = """
         INSERT INTO LOGIN_DETAILS   (USERNAME,
                                     PASS_HASH,
@@ -64,7 +77,12 @@ def register():
         mail_uuid   = format_sql(str(generated_uuid))
     )
     print(query, file=stderr)
-    cur.execute(query)
+    try:
+        cur.execute(query)
+    except Exception as e:
+        print(e, file=stderr)
+        cur.close()
+        return make_response({"message":"Db insertion error"}, 500)
     mysql.connection.commit()
     cur.close()
     compute_email(data_received["email"], generated_uuid)
