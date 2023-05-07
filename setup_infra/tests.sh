@@ -13,4 +13,8 @@ then
     curl -X POST -H "Content-type:application/json" localhost:5000/medic_reviews/ceva1 -d '{"review": "O mizerie"}'
 fi
 
-if [ "$1" = ""]
+if [ "$1" = "personal_data"]
+then
+     curl -X POST -H "Content-type:application/json" localhost:5000/personal_data/ceva1 -d '{"sname": "da",\
+      "lname": "nu", "cnp": "5020", "birthday": "2001-09-17", "sex": "M", "height": 1.9, "weight": 95.5, "sgroup": "A", "rh": "+", "alergy_list": ["chiar nimic"]}'
+fi
