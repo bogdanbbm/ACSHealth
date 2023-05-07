@@ -34,14 +34,19 @@ CREATE TABLE PERSONAL_DATA(
     CNP         varchar(20),
     BIRTHDATE   DATE,
     SEX         varchar(1),
-    HEIGHT      FLOAT(2,2),
+    HEIGHT      FLOAT,
     SGROUP      varchar(2),
     RH          varchar(2),
     PRIMARY KEY (ID)
 );
 CREATE TABLE WEIGHT_HISTORY(
     ID              int NOT NULL,
-    WEIGHT_VALUE    FLOAT(3,2),
+    WEIGHT_VALUE    FLOAT,
+    PRIMARY KEY (ID)
+);
+CREATE TABLE ALERGY_LIST(
+    ID              int NOT NULL,
+    ALERGY          varchar(20),
     PRIMARY KEY (ID)
 );
 CREATE TABLE CONSULTATION_LIST(

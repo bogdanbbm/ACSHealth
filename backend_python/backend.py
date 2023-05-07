@@ -42,6 +42,7 @@ def validate_json(list_of_fields, json):
 import medic_data
 import identity
 import images
+import personal_data
 
 if __name__ == '__main__':
     # TODO: when running in prod delete debug=True

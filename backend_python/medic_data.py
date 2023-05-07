@@ -1,15 +1,15 @@
 from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json,\
 time, datetime
 
-def get_medic_id(username):
+def get_login_id(username):
     cur = mysql.connection.cursor()
     cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
                     .format(username))
-    medic_id = -1
+    login_id = -1
     response_db = cur.fetchone()
     if response_db is not None and response_db[0] is not None:
-        medic_id = int(response_db[0])
-    return medic_id
+        login_id = int(response_db[0])
+    return login_id
 
 @app.route("/medic_list", methods = ["GET", "POST", "DELETE"])
 def medic_details():
@@ -29,12 +29,14 @@ def medic_details():
     elif request.method == "POST":
         data_received = request.get_json()
         if not validate_json(["username", "sname", "lname", "rating"], data_received):
+            cur.close()
             return make_response({"message": "Invalid json"}, 400)
         if float(data_received["rating"]) > 5 or float(data_received["rating"] < 0):
+            cur.close()
             return make_response({"message": "Bad rating"}, 400)
         cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
                     .format(data_received["username"]))
-        medic_id = get_medic_id(data_received["username"])
+        medic_id = get_login_id(data_received["username"])
         if medic_id == -1:
             return make_response({"message": "Bad username"}, 400)
         query = """
@@ -56,15 +58,17 @@ def medic_details():
             print(e, file=stderr)
             cur.close()
             return make_response({"message": "Duplicate entry for medic"}, 400)
-        cur.close()
         mysql.connection.commit()
+        cur.close()
         return make_response({"message": "Success!"}, 201)
     elif request.method == "DELETE":
         data_received = request.get_json()
         if not validate_json(["username"], data_received):
+            cur.close()
             return make_response({"message": "Invalid json"}, 400)
-        medic_id = get_medic_id(data_received["username"])
+        medic_id = get_login_id(data_received["username"])
         if medic_id == -1:
+            cur.close()
             return make_response({"message": "Bad username"}, 400)
         query = """
         DELETE FROM MEDIC_DETAILS WHERE ID = '{}';
@@ -83,7 +87,7 @@ def medic_details():
 def medic_reviews(medic_username):
     cur = mysql.connection.cursor()
     if request.method == "GET":
-        medic_id = get_medic_id(medic_username)
+        medic_id = get_login_id(medic_username)
         if medic_id == -1:
             return make_response({"message": "Bad username"}, 400)
         cur.execute("SELECT REVIEW, IMAGE_STAMP FROM REVIEWS WHERE ID = '{}".format(medic_id))
@@ -99,9 +103,11 @@ def medic_reviews(medic_username):
     if request.method == "POST":
         data_received = request.get_json()
         if not validate_json(["review"], data_received):
+            cur.close()
             return make_response({"message": "Invalid json"}, 400)
-        medic_id = get_medic_id(medic_username)
+        medic_id = get_login_id(medic_username)
         if medic_id == -1:
+            cur.close()
             return make_response({"message": "Bad username"}, 400)
         try:
             timestamp = datetime.fromtimestamp(time.time())\
@@ -124,3 +130,6 @@ def medic_reviews(medic_username):
             cur.close()
             return make_response({"message": "Database insertion error"}, 500)
     return ""
+
+# medical data:
+# - consultatii + tratament, donarea de sange + data
