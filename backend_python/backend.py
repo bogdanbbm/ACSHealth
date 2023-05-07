@@ -12,12 +12,14 @@ from uuid import uuid4
 
 app = Flask(__name__)
 
+
 # Configure MySQL connection
 # TODO: get these from env
 app.config['MYSQL_HOST'] = 'mysql-database'
 app.config['MYSQL_USER'] = 'prod'
 app.config['MYSQL_PASSWORD'] = 'something_encrypt3d'
 app.config['MYSQL_DB'] = 'ip'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 mysql = MySQL(app)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})

@@ -13,18 +13,15 @@ def get_image(timestamp :str):
             cur.close()
             return make_response({"message": "Db selection error"}, 500)
         response_db = cur.fetchone()
-        print(response_db[0], file=stderr)
         if response_db is not None:
             cur.close()
             return make_response(response_db[0], 200)
         cur.close()
         return make_response({"message": "Bad timestamp"}, 400)
     elif request.method == "POST":
-        data_received = request.get_data()
         if 'file' not in request.files:
             cur.close()
             return make_response({"message": "No file provided"}, 400)
-        uploaded_file = request.files['file']
         cur.execute("SELECT ID_REVIEW FROM REVIEWS WHERE IMAGE_STAMP = '{}'"
                     .format(timestamp))
         response_db = cur.fetchone()
@@ -39,7 +36,12 @@ def get_image(timestamp :str):
                             PHOTO)
         VALUES (%s, %s, %s);
         """
-        query_args = (review_id, timestamp, data_received)
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '':
+            query_args = (review_id, timestamp, uploaded_file.read())
+        else:
+            cur.close()
+            return make_response({"message": "No filename provided"}, 400)
         try:
             cur.execute(query, query_args)
             mysql.connection.commit()
