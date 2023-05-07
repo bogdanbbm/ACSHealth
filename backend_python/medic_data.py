@@ -89,8 +89,9 @@ def medic_reviews(medic_username):
     if request.method == "GET":
         medic_id = get_login_id(medic_username)
         if medic_id == -1:
+            cur.close()
             return make_response({"message": "Bad username"}, 400)
-        cur.execute("SELECT REVIEW, IMAGE_STAMP FROM REVIEWS WHERE ID = '{}".format(medic_id))
+        cur.execute("SELECT REVIEW, IMAGE_STAMP FROM REVIEWS WHERE MEDIC_ID = '{}".format(medic_id))
         response_db = cur.fetchall()
         if response_db is not None:
             list_of_reviews = []
@@ -100,7 +101,7 @@ def medic_reviews(medic_username):
             return make_response(json.dumps(list_of_reviews), 200)
         cur.close()
         return make_response({"message": "No reviews found for username " + medic_username}, 400)
-    if request.method == "POST":
+    elif request.method == "POST":
         data_received = request.get_json()
         if not validate_json(["review"], data_received):
             cur.close()
@@ -129,6 +130,39 @@ def medic_reviews(medic_username):
             print(e, file=stderr)
             cur.close()
             return make_response({"message": "Database insertion error"}, 500)
+    elif request.method == "DELETE":
+        data_received = request.get_json()
+        if not validate_json(["review_id"], data_received):
+            cur.close()
+            return make_response({"message": "Invalid json"}, 400)
+        try:
+            cur.execute("SELECT ID_REVIEW, IMAGE_STAMP FROM REVIEWS WHERE ID_REVIEW = '{}'"
+                        .format(data_received["review_id"]))
+        except Exception as e:
+            print(e, file=stderr)
+            cur.close()
+            return make_response({"message": "Db selection error"}, 400)
+        response_db = cur.fetchall()
+        if response_db is not None:
+            # delete from images
+            try:
+                cur.execute("DELETE FROM IMAGES WHERE ID_REVIEW = '{}'".format(response_db[0]))
+            except Exception as e:
+                print(e, file=stderr)
+                cur.close()
+                return make_response({"message": "Db deletion error"}, 400)
+            mysql.connection.commit()
+            # delete from reviews
+            try:
+                cur.execute("DELETE FROM REVIEWS WHERE ID_REVIEW = '{}'".format(response_db[0]))
+            except Exception as e:
+                print(e, file=stderr)
+                cur.close()
+                return make_response({"message": "Db deletion error"}, 400)
+            mysql.connection.commit()
+        else:
+            cur.close()
+            return make_response({"message": "Wrong review id"}, 400)
     return ""
 
 # medical data:
