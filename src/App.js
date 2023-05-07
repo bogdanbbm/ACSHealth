@@ -11,9 +11,13 @@ import MedicalData from './component/medicalData/MedicalData';
 import Appointments from './component/appointments/Appointments';
 import Medics from './component/medics/Medics';
 import NotFound from './component/NotFound';
-import Register from "./component/login/Register";
+import Register from './component/login/Register';
+import Login from './component/login/Login';
+import LoginAccButton from './component/login_acc_button/LoginAccButton';
+import useToken from './hooks/useToken';
+import PropTypes from 'prop-types';
 
-class App extends Component {
+class AppComponent extends Component {
   render() {
     return (
 
@@ -33,7 +37,12 @@ class App extends Component {
               <li>
                 <Link to="/medics">Medics</Link>
               </li>
+              <div className="spacer"></div>
+              <LoginAccButton />
             </ul>
+
+
+
           </nav>
 
           <Routes>
@@ -41,6 +50,7 @@ class App extends Component {
             <Route exact path="/medicalData" element={<MedicalData />}></Route>
             <Route exact path="/appointments" element={<Appointments />}></Route>
             <Route exact path="/medics" element={<Medics />}></Route>
+            <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
             <Route exact path="/register" element={<Register />}></Route>
             <Route path="*" element={<NotFound />}></Route>
           </Routes>
@@ -49,6 +59,18 @@ class App extends Component {
 
     );
   }
+}
+
+AppComponent.propTypes = {
+  setToken: PropTypes.func.isRequired
+};
+
+function App() {
+  const {setToken} = useToken();
+
+  return (
+    <AppComponent setToken={setToken}/>
+  );
 }
 
 export default App;

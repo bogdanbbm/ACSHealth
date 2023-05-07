@@ -1,0 +1,18 @@
+.login-button {
+    position: relative;
+    height: 30px;
+    width: 100px;
+    margin-right: 10px;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: ghostwhite;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

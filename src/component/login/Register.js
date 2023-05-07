@@ -1,9 +1,9 @@
 // noinspection JSCheckFunctionSignatures
 
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import './Login.css';
-import axios from "axios";
-import PropTypes from "prop-types";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 async function registerUser(credentials) {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -13,11 +13,11 @@ async function registerUser(credentials) {
       'Content-Type': 'application/json'
     }
   })
-    .then(response => response.data)
-    .catch(error => console.error(error));
+    .then(response => response)
+    .catch(error => error.response);
 }
 
-function Register({ setToken }) {
+function Register() {
   const [input, setInput] = useState({
     username: '',
     password: '',
@@ -34,6 +34,8 @@ function Register({ setToken }) {
 
   const [isMedic, setIsMedic] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  const navigate = useNavigate();
 
   const onInputChange = e => {
     const { name, value } = e.target;
@@ -103,13 +105,25 @@ function Register({ setToken }) {
 
     setSubmitError('');
 
-    const token = await registerUser({
+    const response = await registerUser({
       email: input.email,
       username: input.username,
       password: input.password,
       isMedic: isMedic
     });
-    setToken(token);
+
+    if (!response) {
+      setSubmitError('Something went wrong!');
+      return;
+    }
+
+    if (response.status === 201) {
+      navigate('/register/confirmation');
+    } else if (response.status === 409) {
+      setSubmitError(response.data.message);
+    } else {
+      setSubmitError('Something went wrong!');
+    }
   }
 
   return (
@@ -178,9 +192,5 @@ function Register({ setToken }) {
     </div>
   );
 }
-
-Register.propTypes = {
-  setToken: PropTypes.func.isRequired
-};
 
 export default Register;
