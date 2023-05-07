@@ -9,7 +9,7 @@ pip3 install flask flask_mysqldb flask_cors pyjwt
 docker compose up -d
 
 # wait for the containers (mysql espacially) to start
-sleep 40
+sleep 80
 
 # setup the database
 commands=`cat dbsetup.sql`
