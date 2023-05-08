@@ -1,5 +1,5 @@
 import './App.css';
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -38,9 +38,11 @@ class AppComponent extends Component {
                 <Link to="/medics">Medics</Link>
               </li>
               <div className="spacer"></div>
-              <LoginAccButton />
             </ul>
 
+            <div className="login-acc-button">
+              <LoginAccButton />
+            </div>
 
 
           </nav>
