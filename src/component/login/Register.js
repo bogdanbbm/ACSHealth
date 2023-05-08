@@ -118,7 +118,7 @@ function Register() {
     }
 
     if (response.status === 201) {
-      navigate('/register/confirmation');
+      navigate('/register/success');
     } else if (response.status === 409) {
       setSubmitError(response.data.message);
     } else {
