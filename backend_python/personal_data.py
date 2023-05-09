@@ -9,7 +9,10 @@ def personal_data(username):
         cur.execute("SELECT * FROM PERSONAL_DATA WHERE ID = {}".format(get_login_id(username)))
         response_db = cur.fetchall()
         if response_db is not None:
-            return make_response(response_db, 200)
+            personal = []
+            for entry in response_db:
+                personal.append({"sur_name": entry[1], "last_name": entry[2]})
+            return make_response(json.dumps(personal), 300)
         cur.close()
         return make_response({"message": "No data found"}, 400)
     
