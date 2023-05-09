@@ -11,7 +11,7 @@ function AccountButton() {
   }
 
   return (
-    <div>
+    <div className="login-button">
       <button onClick={handleClick}>Log out</button>
     </div>
   );
