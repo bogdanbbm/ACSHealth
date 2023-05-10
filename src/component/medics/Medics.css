@@ -1,0 +1,14 @@
+.medics {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    font-family: popins, sans-serif;
+    box-sizing: border-box;
+    height: 110vh;
+    width: 100%;
+    place-items: center;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
 import Medic from "./Medic";
+import './Medics.css';
 
 function getMedics() {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -52,7 +53,7 @@ function Medics() {
 
   medics.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
   return (
-    <div>
+    <div className="medics">
         <h1>Medics</h1>
         <div className="medics-container">
             {medics.map(item => <Medic medic={item} />)}
