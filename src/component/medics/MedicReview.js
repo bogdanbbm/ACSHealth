@@ -1,12 +1,12 @@
-import React from "react";
-import PropTypes from "prop-types";
-//     review(username) = review(text), rating(float)
-function MedicReview({review}) {
+import React from 'react';
+import PropTypes from 'prop-types';
+
+function MedicReview({ review }) {
     console.log(review);
     return (
-        <div>
+        <div className="review-container">
             <h1>Medic Review</h1>
-            <div className="review-container">
+            <div className="review-body">
                 <p>{review.rating}</p>
                 <p>{review.review}</p>
             </div>

@@ -1,6 +1,6 @@
 import React from 'react';
-import axios from "axios";
-import Medic from "./Medic";
+import axios from 'axios';
+import Medic from './Medic';
 import './Medics.css';
 
 function getMedics() {
@@ -29,21 +29,38 @@ function getReviews(medicId) {
 
 function Medics() {
   let medics = [{
-    firstName: "John",
-    lastName: "Doe",
+    firstName: 'John',
+    lastName: 'Doe',
     rating: 3.0,
-    username: "johndoe",
+    username: 'johndoe',
     reviews: [
       {
         rating: 4.5,
-        review: "Very good medic"
+        review: 'Very good medic'
       },
       {
         rating: 1.5,
-        review: "Very bad medic"
+        review: 'Very bad medic'
       }
     ]
   }];
+
+  medics.push({
+    firstName: 'Jane',
+    lastName: 'Doe',
+    rating: 4.0,
+    username: 'janedoe',
+    reviews: [
+      {
+        rating: 4.5,
+        review: 'Very good medic'
+      },
+      {
+        rating: 1.5,
+        review: 'Very bad medic'
+      }
+    ]
+  });
   // medics = getMedics();
   if (!medics) {
     for (let i = 0; i < medics.length; i++) {

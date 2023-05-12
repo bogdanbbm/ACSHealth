@@ -1,9 +1,10 @@
-import React, {useState} from "react";
-import MedicReview from "./MedicReview";
-import PropTypes from "prop-types";
-import Modal from "@material-ui/core/Modal";
+import React, { useState } from 'react';
+import MedicReview from './MedicReview';
+import PropTypes from 'prop-types';
+import Modal from '@material-ui/core/Modal';
+import './Medics.css';
 
-function Medic({medic}) {
+function Medic({ medic }) {
     const [open, setOpen] = useState(false);
 
     const handleOpen = () => {
@@ -15,23 +16,42 @@ function Medic({medic}) {
     }
 
     return (
-        <div>
-            <h1 >Medic</h1>
-            <div className="medic-container" >
-                <div className="medic-header">
-                    <p onClick={handleOpen}>{medic.firstName} {medic.lastName}</p>
-                    <p>{medic.rating}</p>
+        <div className="medic-container" >
+            <div className="medic-header">
+                <h1>{medic.firstName} {medic.lastName}</h1>
+                <img src="https://via.placeholder.com/150" alt="Medic" />
+            </div>
+            <div className="medic-body">
+                <div className="medic-details">
+                    <p>Primary Medic</p>
+                    <p>
+                        Rating: {medic.rating.toFixed(2)}<br/>
+                        Number of reviews: {medic.reviews.length}
+                    </p>
                 </div>
                 <div className="medic-reviews">
+                    <button onClick={handleOpen}>View reviews</button>
                     <Modal className="medic-modal" onClose={handleClose} open={open}>
-                        <div className="medic-header">
-                            <p>{medic.firstName} {medic.lastName}</p>
-                            <p>{medic.rating}</p>
-                            {medic.reviews.map(item => <MedicReview review={item} />)}
+                        <div className="modal-container">
+                            <div className="medic-header">
+                                <h1>{medic.firstName} {medic.lastName}</h1>
+                                <img src="https://via.placeholder.com/150" alt="Medic" />
+                            </div>
+                            <div className="medic-body">
+                                <div className="medic-details">
+                                    <p>Primary Medic</p>
+                                    <p>
+                                        Rating: {medic.rating.toFixed(2)}<br/>
+                                        Number of reviews: {medic.reviews.length}
+                                    </p>
+                                </div>
+                                <div className="medic-reviews">
+                                    {medic.reviews.map(item => <MedicReview review={item} />)}
+                                </div>
+                            </div>
                         </div>
                     </Modal>
                 </div>
-
             </div>
         </div>
     );
