@@ -40,7 +40,7 @@ class AppComponent extends Component {
             </ul>
 
             <div className="login-acc-button">
-              <LoginAccButton />
+              <LoginAccButton token={this.props.token} setToken={this.props.setToken}/>
             </div>
           </nav>
         </div>
@@ -61,14 +61,15 @@ class AppComponent extends Component {
 }
 
 AppComponent.propTypes = {
+  token: PropTypes.string.isRequired,
   setToken: PropTypes.func.isRequired
 };
 
 function App() {
-  const {setToken} = useToken();
+  const { token,setToken } = useToken();
 
   return (
-    <AppComponent setToken={setToken}/>
+    <AppComponent token={token} setToken={setToken}/>
   );
 }
 

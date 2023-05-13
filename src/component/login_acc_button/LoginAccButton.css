@@ -38,6 +38,12 @@
 }
 
 .login-button button {
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    background: ghostwhite;
     text-decoration: none;
     color: #7e1f74;
     width: 100%;

@@ -14,14 +14,21 @@ function useToken() {
   const getToken = () => {
     const tokenString = sessionStorage.getItem('token');
     console.log(tokenString)
-    return tokenString ? JSON.parse(tokenString) : null;
+    return tokenString;
   };
 
   const [token, setToken] = useState(getToken());
 
   const saveToken = userToken => {
-    sessionStorage.setItem('token', JSON.stringify(userToken));
-    setToken(userToken.token);
+    if (userToken === null) {
+      sessionStorage.removeItem('token');
+      setToken(null);
+
+      return;
+    }
+
+    sessionStorage.setItem('token', userToken);
+    setToken(userToken);
   };
 
   return {
