@@ -36,7 +36,7 @@ function Login({ setToken }) {
       return;
     }
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       const token = response.data.token;
       setToken(token);
       navigate(-1);

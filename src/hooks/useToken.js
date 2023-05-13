@@ -13,8 +13,8 @@ import { useState } from 'react';
 function useToken() {
   const getToken = () => {
     const tokenString = sessionStorage.getItem('token');
-    const userToken = JSON.parse(tokenString);
-    return userToken?.token;
+    console.log(tokenString)
+    return tokenString ? JSON.parse(tokenString) : null;
   };
 
   const [token, setToken] = useState(getToken());

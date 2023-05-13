@@ -69,6 +69,7 @@ function Medics() {
   }
 
   medics.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
+
   return (
     <div className="medics">
         <h1>Medics</h1>
