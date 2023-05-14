@@ -31,12 +31,12 @@ function Login({ setToken }) {
 
     if (!response) {
       setError('An error occurred. Please try again later.');
-      console.log('should navigate');
+      console.log('Unable to connect to the server.');
       navigate('/');
       return;
     }
 
-    if (response.status === 200) {
+    if (response.status === 201) {
       const token = response.data.token;
       setToken(token);
       navigate(-1);

@@ -5,6 +5,7 @@
 .App-logo {
   height: 40vmin;
   pointer-events: none;
+  user-select: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -38,22 +39,29 @@
 }
 
 .navbar {
+  display: flex;
   margin-top: -20px;
   background: linear-gradient(-135deg, #c850c0, #4158d0);
 }
 
 @media screen and (max-width: 768px) {
   .navbar {
-
-
+    flex-direction: column;
   }
 }
 
 .navbar nav {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  width: 100%;
   padding: 0 50px;
+}
+
+@media screen and (max-width: 768px) {
+  .navbar nav {
+    flex-flow: wrap;
+    padding: 0;
+  }
 }
 
 .navbar nav ul {
@@ -65,11 +73,19 @@
 
 .navbar nav .login-acc-button {
   padding-top: 20px;
+  margin-left: auto;
 }
 
 @media screen and (max-width: 768px) {
+  .navbar nav .login-acc-button {
+    margin-left: auto;
+    margin-bottom: 0;
+    padding: 0 0 20px 5px;
+  }
+
   .navbar nav ul {
     justify-content: center;
+    flex-flow: wrap;
   }
 
   .navbar nav ul li {
@@ -123,7 +139,3 @@
     font-size: 16px;
   }
 }
-
-
-
-

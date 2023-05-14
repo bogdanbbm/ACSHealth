@@ -37,26 +37,23 @@ class AppComponent extends Component {
               <li>
                 <Link to="/medics">Medics</Link>
               </li>
-              <div className="spacer"></div>
             </ul>
 
             <div className="login-acc-button">
-              <LoginAccButton />
+              <LoginAccButton token={this.props.token} setToken={this.props.setToken}/>
             </div>
-
-
           </nav>
-
-          <Routes>
-            <Route exact path="/" element={<Home />}></Route>
-            <Route exact path="/medicalData" element={<MedicalData />}></Route>
-            <Route exact path="/appointments" element={<Appointments />}></Route>
-            <Route exact path="/medics" element={<Medics />}></Route>
-            <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
-            <Route exact path="/register" element={<Register />}></Route>
-            <Route path="*" element={<NotFound />}></Route>
-          </Routes>
         </div>
+
+        <Routes>
+          <Route exact path="/" element={<Home />}></Route>
+          <Route exact path="/medicalData" element={<MedicalData />}></Route>
+          <Route exact path="/appointments" element={<Appointments />}></Route>
+          <Route exact path="/medics" element={<Medics />}></Route>
+          <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
+          <Route exact path="/register" element={<Register />}></Route>
+          <Route path="*" element={<NotFound />}></Route>
+        </Routes>
       </Router>
 
     );
@@ -64,14 +61,15 @@ class AppComponent extends Component {
 }
 
 AppComponent.propTypes = {
+  token: PropTypes.string.isRequired,
   setToken: PropTypes.func.isRequired
 };
 
 function App() {
-  const {setToken} = useToken();
+  const { token,setToken } = useToken();
 
   return (
-    <AppComponent setToken={setToken}/>
+    <AppComponent token={token} setToken={setToken}/>
   );
 }
 

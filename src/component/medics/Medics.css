@@ -1,0 +1,157 @@
+.medics {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    font-family: popins, sans-serif;
+    box-sizing: border-box;
+    height: 110vh;
+    width: 100%;
+    place-items: center;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.medics .medics-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    height: auto;
+    grid-gap: 1rem;
+    padding: 0 20px;
+}
+
+@media screen and (max-width: 768px) {
+    .medics .medics-container {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+        padding: 0 20px;
+    }
+}
+
+.medic-container {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.medic-container:hover {
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+.medic-container:after {
+    transform: translateY(0px);
+    transition: all 0.3s ease;
+}
+
+.medic-container .medic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    border-radius: 15px 15px 0 0;
+}
+
+.medic-container .medic-header img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50px;
+}
+
+.medic-container .medic-body {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+.medic-container .medic-body .medic-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.medic-container .medic-body .medic-details p {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 400;
+}
+
+.medic-container .medic-body .medic-reviews {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.medic-container .medic-body .medic-reviews button {
+    width: 100%;
+    height: 50px;
+    border: none;
+    outline: none;
+    border-radius: 25px;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.medic-container .medic-body .medic-reviews button:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.medic-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-container {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.modal-container .medic-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 30px;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    border-radius: 15px 15px 0 0;
+}
+
+.modal-container .medic-header img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50px;
+}
+
+.modal-container .medic-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px 30px;
+}
+
+.modal-container .medic-body .medic-details {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.modal-container .medic-body .medic-details p {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 400;
+}
