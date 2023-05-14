@@ -37,17 +37,17 @@ def register():
     the following entries:
     email           -> str
     username        -> str
-    pass_hash       -> str (sha256)
-    is_medic        -> int (either 0 or 1)
+    password       -> str (sha256)
+    isMedic        -> int (either 0 or 1)
     """
     generated_uuid = uuid4()
     data_received = request.get_json()
-    if not validate_json(["email", "username", "pass_hash", "is_medic"], data_received):
+    if not validate_json(["email", "username", "password", "isMedic"], data_received):
         return make_response({"message": "Invalid json"}, 400)
-    if int(data_received["is_medic"]) not in [0, 1]:
-        return make_response({"message": "Is_medic should be 0 or 1!"}, 400)
-    if data_received["username"] == "" or data_received["pass_hash"] == "":
-        return make_response({"message": "Username or pass_hash empty"}, 400)
+    if int(data_received["isMedic"]) not in [0, 1]:
+        return make_response({"message": "isMedic should be 0 or 1!"}, 400)
+    if data_received["username"] == "" or data_received["password"] == "":
+        return make_response({"message": "Username or password empty"}, 400)
     cur = mysql.connection.cursor()
     # check whether the username is taken or not
     try:
@@ -68,12 +68,12 @@ def register():
                                     IS_MEDIC,
                                     MAIL_UUID)
             VALUES ({username},
-                    {pass_hash}, {is_medic},
+                    {password}, {isMedic},
                     {mail_uuid});
     """.format(
         username    = format_sql(data_received["username"]),
-        pass_hash   = format_sql(data_received["pass_hash"]),
-        is_medic    = int(data_received["is_medic"]),
+        password   = format_sql(data_received["password"]),
+        isMedic    = int(data_received["isMedic"]),
         mail_uuid   = format_sql(str(generated_uuid))
     )
     print(query, file=stderr)
@@ -94,21 +94,21 @@ def login():
     This method will receive a JSON containing
     the following entries:
     username        -> str
-    pass_hash       -> str (sha256)
+    password       -> str (sha256)
     """
     data_received = request.get_json()
-    if not validate_json(["username", "pass_hash"], data_received):
+    if not validate_json(["username", "password"], data_received):
         return make_response({"message": "Invalid json"}, 400)
-    if data_received["username"] == "" or data_received["pass_hash"] == "":
-        return make_response({"message": "Username or pass_hash empty"}, 400)
+    if data_received["username"] == "" or data_received["password"] == "":
+        return make_response({"message": "Username or password empty"}, 400)
     cur = mysql.connection.cursor()
     query = """
         SELECT IS_MEDIC, MAIL_CHECK
         FROM LOGIN_DETAILS
-        WHERE USERNAME = {username} AND PASS_HASH = {pass_hash};
+        WHERE USERNAME = {username} AND PASS_HASH = {password};
     """.format(
         username    = format_sql(data_received["username"]),
-        pass_hash   = format_sql(data_received["pass_hash"]),
+        password   = format_sql(data_received["password"]),
     )
     print(query, file=stderr)
     cur.execute(query)
@@ -116,17 +116,17 @@ def login():
     print(query_res, file=stderr)
     if query_res != None:
         if query_res[1] != 'Y':
-            print("Login failed", file=stderr)
+            print("Login failed1", file=stderr)
             cur.close()
-            return make_response({"message": "Login failed"}, 400)
+            return make_response({"message": "Login failed1"}, 400)
         print("Login successful!", file=stderr)
         token = jwt.encode({
-            'is_medic': int(query_res[0]),
+            'isMedic': int(query_res[0]),
             'exp' : datetime.utcnow() + timedelta(minutes = 30)
         }, "secret")
         cur.close()
         return make_response(jsonify({'token' : token}), 201)
     else:
-        print("Login failed", file=stderr)
+        print("Login failed2", file=stderr)
         cur.close()
-        return make_response({"message": "Login failed"}, 400)
+        return make_response({"message": "Login failed2"}, 400)
