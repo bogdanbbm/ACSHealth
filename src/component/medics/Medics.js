@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import Medic from './Medic';
 import './Medics.css';
+import PropTypes from "prop-types";
 
 function getMedics() {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -27,7 +28,7 @@ function getReviews(medicId) {
     .catch(error => console.log(error));
 }
 
-function Medics() {
+function Medics({ token }) {
   let medics = [{
     firstName: 'John',
     lastName: 'Doe',
@@ -74,10 +75,14 @@ function Medics() {
     <div className="medics">
         <h1>Medics</h1>
         <div className="medics-container">
-            {medics.map(item => <Medic medic={item} />)}
+            {medics.map(item => <Medic medic={item} token={token} />)}
         </div>
     </div>
   );
+}
+
+Medics.propTypes = {
+  token: PropTypes.string.isRequired
 }
 
 export default Medics;

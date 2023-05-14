@@ -5,10 +5,9 @@ function MedicReview({ review }) {
     console.log(review);
     return (
         <div className="review-container">
-            <h1>Medic Review</h1>
             <div className="review-body">
-                <p>{review.rating}</p>
-                <p>{review.review}</p>
+                <h4>Rating: {review.rating}</h4>
+                <p style={{textAlign: "left"}}>{review.review}</p>
             </div>
         </div>
     );

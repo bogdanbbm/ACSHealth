@@ -50,6 +50,7 @@
 }
 
 .medic-container .medic-header {
+    color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -72,6 +73,7 @@
 }
 
 .medic-container .medic-body .medic-details {
+    text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,13 +147,51 @@
 }
 
 .modal-container .medic-body .medic-details {
+    text-align: left;
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
 .modal-container .medic-body .medic-details p {
-    text-align: center;
+    text-align: left;
     font-size: 17px;
     font-weight: 400;
+}
+
+.modal-container .medic-body .add-review-button {
+    display: flex;
+    justify-content: center;
+}
+
+.modal-container .medic-body .add-review-button button{
+    width: 50%;
+    height: 50px;
+    border: none;
+    outline: none;
+    border-radius: 25px;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.modal-container .medic-body .add-review-button button:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.review-container {
+    border: 5px solid #4158d0;
+    border-right-color: #c850c0;
+    border-bottom-color: #c850c0;
+    border-radius: 15px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.review-container .review-body {
+    padding: 10px 20px;
 }
