@@ -1,15 +1,16 @@
+#!/bin/bash
 
 GREEN=$(tput setaf 2)
 
 # get the dev environment ready
 sudo apt-get install libmysqlclient-dev
-pip3 install flask flask_mysqldb flask_cors pyjwt
+pip install flask flask_mysqldb flask_cors pyjwt
 
 # start containers
 docker compose up -d
 
 # wait for the containers (mysql espacially) to start
-sleep 80
+sleep 15
 
 # setup the database
 commands=`cat dbsetup.sql`

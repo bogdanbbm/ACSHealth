@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from "prop-types";
 import axios from "axios";
 import './Login.css';
+import { useNavigate } from "react-router-dom";
 
 async function loginUser(credentials) {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -11,21 +12,41 @@ async function loginUser(credentials) {
       'Content-Type': 'application/json'
     }
   })
-    .then(response => response.data)
-    .catch(error => console.error(error));
+    .then(response => response)
+    .catch(error => error.response);
 }
 
 function Login({ setToken }) {
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const token = await loginUser({
+    const response = await loginUser({
       username,
       password
     });
-    setToken(token);
+
+    if (!response) {
+      setError('An error occurred. Please try again later.');
+      console.log('should navigate');
+      navigate('/');
+      return;
+    }
+
+    if (response.status === 200) {
+      const token = response.data.token;
+      setToken(token);
+      navigate(-1);
+    } else if (response.status === 400) {
+      setError(response.data.message);
+    } else {
+      setError('An error occurred. Please try again later.');
+      console.log(response)
+    }
+
   }
 
   return (
@@ -43,6 +64,7 @@ function Login({ setToken }) {
           </div>
           <div className="field">
             <button type="submit">Login</button>
+            {error && <p className="err">{error}</p>}
           </div>
           <div className="register-link">
             <p>Don't have an account? </p>

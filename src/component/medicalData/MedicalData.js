@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import useToken from "../../hooks/useToken";
-import Login from "../login/Login";
+import { useNavigate } from "react-router-dom";
 
 function MedicalData() {
-  const {token, setToken} = useToken();
+  const {token} = useToken();
+  const navigate = useNavigate();
+  console.log(token);
 
-  if (!token) {
-    return <Login setToken={setToken} />
-  }
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate, token]);
 
   return (
     <div>
