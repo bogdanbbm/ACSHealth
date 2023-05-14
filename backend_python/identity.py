@@ -115,36 +115,19 @@ def login():
     )
     print(query, file=stderr)
     cur.execute(query)
-    query_res = cur.fetchall()[0]
-    print(query_res, file=stderr)
-    if query_res != None:
-        if query_res[1] != 'Y':
-            print("Login failed1", file=stderr)
-            cur.close()
-            return make_response({"message": "Login failed1"}, 400)
-        print("Login successful!", file=stderr)
-        token = jwt.encode({
-            'isMedic': 0 if query_res[0] == 'N' else 1,
-            'exp' : datetime.utcnow() + timedelta(minutes = 30)
-        }, "secret")
+    query_res = cur.fetchone()
+    if query_res is None:
+        print("Account does not exist", file=stderr)
         cur.close()
-        return make_response(jsonify({'token' : token}), 201)
-    else:
-        print("Login failed2", file=stderr)
+        return make_response({"message": "Account does not exist"}, 400)
+    if query_res[1] != 'Y':
+        print("Email not verified", file=stderr)
         cur.close()
-        return make_response({"message": "Login failed2"}, 400)
-
-@app.route('/has_completed/<username>', methods = ["GET"])
-def has_completed_get(username):
-    cur = mysql.connection.cursor()
-    try:
-        cur.execute("SELECT COMPLETED_REG FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
-                    .format(username))
-    except Exception as e:
-        print(e, file=stderr)
-        cur.close()
-        return make_response({"message": "Db selection error"}, 500)
-    db_response = cur.fetchone()
-    if db_response != ():
-        return make_response({"has_completed" : 1 if db_response[0] == 'Y' else 0}, 200)
-    return make_response({"message": "No user with that username"}, 400)
+        return make_response({"message": "Email not verified"}, 400)
+    print("Login successful!", file=stderr)
+    token = jwt.encode({
+        'isMedic': 0 if query_res[0] == 'N' else 1,
+        'exp' : datetime.utcnow() + timedelta(minutes = 30)
+    }, "secret")
+    cur.close()
+    return make_response(jsonify({'token' : token}), 201)
