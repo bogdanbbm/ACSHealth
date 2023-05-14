@@ -127,6 +127,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    color: white;
     padding: 10px 30px;
     background: linear-gradient(-135deg, #c850c0, #4158d0);
     border-radius: 15px 15px 0 0;

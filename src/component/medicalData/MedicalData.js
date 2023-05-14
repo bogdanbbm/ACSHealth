@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import useToken from "../../hooks/useToken";
-import { useNavigate } from "react-router-dom";
+import useToken from '../../hooks/useToken';
+import { useNavigate } from 'react-router-dom';
 
 function MedicalData() {
   const {token} = useToken();
