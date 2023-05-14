@@ -73,7 +73,7 @@ def register():
     """.format(
         username    = format_sql(data_received["username"]),
         password   = format_sql(data_received["password"]),
-        isMedic    = int(data_received["isMedic"]),
+        isMedic    = 'Y' if int(data_received["isMedic"]) == 1 else 'N',
         mail_uuid   = format_sql(str(generated_uuid))
     )
     print(query, file=stderr)

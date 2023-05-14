@@ -1,9 +1,9 @@
 import React from 'react';
-import useToken from '../../hooks/useToken';
 import { useNavigate } from "react-router-dom";
+import './LoginAccButton.css'
+import PropTypes from 'prop-types';
 
-function AccountButton() {
-  const {setToken} = useToken();
+function AccountButton({ setToken }) {
   const navigate = useNavigate();
   const handleClick = () => {
     setToken(null);
@@ -11,10 +11,14 @@ function AccountButton() {
   }
 
   return (
-    <div>
+    <div className="login-button">
       <button onClick={handleClick}>Log out</button>
     </div>
   );
+}
+
+AccountButton.propTypes = {
+  setToken: PropTypes.func.isRequired
 }
 
 export default AccountButton;
