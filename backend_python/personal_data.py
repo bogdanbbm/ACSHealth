@@ -11,8 +11,28 @@ def personal_data(username):
         if response_db is not None:
             personal = []
             for entry in response_db:
-                personal.append({"sur_name": entry[1], "last_name": entry[2]})
-            return make_response(json.dumps(personal), 300)
+                """
+                ID          int NOT NULL,
+                SUR_NAME    varchar(255),
+                LAST_NAME   varchar(255),
+                CNP         varchar(20),
+                BIRTHDATE   DATE,
+                SEX         varchar(1),
+                HEIGHT      FLOAT,
+                SGROUP      varchar(2),
+                RH          varchar(2),
+                """
+
+                personal.append({"sur_name": entry[1], 
+                                 "last_name": entry[2], 
+                                 "cnp": entry[3], 
+                                 "birthdate": entry[4],
+                                 "sex": entry[5],
+                                 "height": entry[6],
+                                 "sgroup": entry[7],
+                                 "rh": entry[8]
+                                 })
+            return make_response(json.dumps(personal), 200)
         cur.close()
         return make_response({"message": "No data found"}, 400)
     
