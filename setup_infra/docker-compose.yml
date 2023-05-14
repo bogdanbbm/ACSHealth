@@ -13,7 +13,8 @@ services:
       - MYSQL_PASSWORD=something_encrypt3d
       - MYSQL_DATABASE=ip
     ports:
-      - '3306'
+      - '59068:3306'
+      - '59069:33060'
 
   backend:
     image: docker.io/python:3.9.16
