@@ -66,15 +66,18 @@ def register():
         INSERT INTO LOGIN_DETAILS   (USERNAME,
                                     PASS_HASH,
                                     IS_MEDIC,
+                                    COMPLETED_REG,
                                     MAIL_UUID)
             VALUES ({username},
                     {password}, {isMedic},
+                    {completed_reg},
                     {mail_uuid});
     """.format(
-        username    = format_sql(data_received["username"]),
-        password   = format_sql(data_received["password"]),
-        isMedic    = format_sql('Y' if int(data_received["isMedic"]) == 1 else 'N'),
-        mail_uuid   = format_sql(str(generated_uuid))
+        username        = format_sql(data_received["username"]),
+        password        = format_sql(data_received["password"]),
+        isMedic         = format_sql('Y' if int(data_received["isMedic"]) == 1 else 'N'),
+        completed_reg   = format_sql('N' if int(data_received["isMedic"]) == 1 else 'Y'),
+        mail_uuid       = format_sql(str(generated_uuid))
     )
     print(query, file=stderr)
     try:
@@ -130,3 +133,18 @@ def login():
         print("Login failed2", file=stderr)
         cur.close()
         return make_response({"message": "Login failed2"}, 400)
+
+@app.route('/has_completed/<username>', methods = ["GET"])
+def has_completed_get(username):
+    cur = mysql.connection.cursor()
+    try:
+        cur.execute("SELECT COMPLETED_REG FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
+                    .format(username))
+    except Exception as e:
+        print(e, file=stderr)
+        cur.close()
+        return make_response({"message": "Db selection error"}, 500)
+    db_response = cur.fetchone()
+    if db_response != ():
+        return make_response({"has_completed" : 1 if db_response[0] == 'Y' else 0}, 200)
+    return make_response({"message": "No user with that username"}, 400)
