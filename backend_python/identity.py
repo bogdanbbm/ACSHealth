@@ -73,7 +73,7 @@ def register():
     """.format(
         username    = format_sql(data_received["username"]),
         password   = format_sql(data_received["password"]),
-        isMedic    = 'Y' if int(data_received["isMedic"]) == 1 else 'N',
+        isMedic    = format_sql('Y' if int(data_received["isMedic"]) == 1 else 'N'),
         mail_uuid   = format_sql(str(generated_uuid))
     )
     print(query, file=stderr)
@@ -121,7 +121,7 @@ def login():
             return make_response({"message": "Login failed1"}, 400)
         print("Login successful!", file=stderr)
         token = jwt.encode({
-            'isMedic': int(query_res[0]),
+            'isMedic': 0 if query_res[0] == 'N' else 1,
             'exp' : datetime.utcnow() + timedelta(minutes = 30)
         }, "secret")
         cur.close()
