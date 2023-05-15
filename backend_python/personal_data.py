@@ -6,7 +6,7 @@ def personal_data(username):
     cur = mysql.connection.cursor()
     
     if request.method == "GET":
-        cur.execute("SELECT * FROM PERSONAL_DATA WHERE ID = {}".format(get_login_id(username)))
+        cur.execute("SELECT * FROM PATIENT_DATA WHERE ID = {}".format(get_login_id(username)))
         response_db = cur.fetchall()
         if response_db is not None:
             personal = []
@@ -23,7 +23,7 @@ def personal_data(username):
                 RH          varchar(2),
                 """
                 alergyList = []
-                cur.execute("SELECT ALERGY FROM alergyList WHERE ID = {}".format(get_login_id(username)))
+                cur.execute("SELECT ALERGY FROM ALERGY_LIST WHERE ID = {}".format(get_login_id(username)))
                 response_alergy = cur.fetchall()
                 if response_alergy is not None:
                     for alergy in response_alergy:
@@ -32,13 +32,12 @@ def personal_data(username):
                 personal.append({"firstName": entry[1], 
                                  "lastName": entry[2], 
                                  "cnp": entry[3], 
-                                 "birthday": entry[4],
+                                 "birthday": str(entry[4]),
                                  "sex": entry[5],
                                  "height": entry[6],
                                  "bloodGroup": entry[7],
                                  "rh": entry[8],
                                  "alergyList": alergyList,
-                                 "weight": entry[9],
                                  })
             return make_response(json.dumps(personal), 200)
         cur.close()
@@ -66,13 +65,13 @@ def personal_data(username):
                 return make_response({"message": "Bad username"}, 400)
             try:
                 cur.execute("""INSERT INTO PATIENT_DATA     (ID,
-                                                            SUR_NAME,
+                                                            FIRST_NAME,
                                                             LAST_NAME,
                                                             CNP,
                                                             BIRTHDATE,
                                                             SEX,
                                                             HEIGHT,
-                                                            bloodGroup,
+                                                            SGROUP,
                                                             RH)
                                     VALUES ({login_id}, {firstName}, {lastName},
                                             {cnp}, {birthday}, {sex},
@@ -81,7 +80,7 @@ def personal_data(username):
                                     login_id    = login_id,
                                     firstName       = format_sql(data_received["firstName"]),
                                     lastName       = format_sql(data_received["lastName"]),
-                                    cnp         = format_sql(data_received["cnp"]),
+                                    cnp         = data_received["cnp"],
                                     birthday    = format_sql(data_received["birthday"]),
                                     sex         = format_sql(data_received["sex"]),
                                     height      = data_received["height"],
@@ -111,7 +110,7 @@ def personal_data(username):
         try:
             if "alergyList" in data_received:
                 for alergy in data_received["alergyList"]:
-                    cur.execute("""INSERT INTO alergyList     (ID,
+                    cur.execute("""INSERT INTO ALERGY_LIST     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(
@@ -120,7 +119,7 @@ def personal_data(username):
                             ))
                     mysql.connection.commit()
             elif "new_alergy" in data_received:
-                cur.execute("""INSERT INTO alergyList     (ID,
+                cur.execute("""INSERT INTO ALERGY_LIST     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(
