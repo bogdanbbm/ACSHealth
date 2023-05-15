@@ -1,7 +1,7 @@
 from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json
 from medic_data import get_login_id
 
-@app.route('/personal_data/<username>', methods = ["GET", "POST", "DELETE"])
+@app.route('/patient_data/<username>', methods = ["GET", "POST", "DELETE"])
 def personal_data(username):
     cur = mysql.connection.cursor()
     
@@ -38,7 +38,7 @@ def personal_data(username):
     
     elif request.method == "POST":
         data_received = request.get_json()
-        if not validate_json(["sname", "lname", "cnp", "birthday",\
+        if not validate_json(["fname", "lname", "cnp", "birthday",\
                               "sex", "height", "weight",
                               "sgroup", "rh", "alergy_list"], data_received)\
         and\
@@ -57,7 +57,7 @@ def personal_data(username):
                 cur.close()
                 return make_response({"message": "Bad username"}, 400)
             try:
-                cur.execute("""INSERT INTO PERSONAL_DATA   (ID,
+                cur.execute("""INSERT INTO PATIENT_DATA     (ID,
                                                             SUR_NAME,
                                                             LAST_NAME,
                                                             CNP,
@@ -71,7 +71,7 @@ def personal_data(username):
                                             {height}, {sgroup}, {rh})"""
                                 .format(
                                     login_id    = login_id,
-                                    sname       = format_sql(data_received["sname"]),
+                                    sname       = format_sql(data_received["fname"]),
                                     lname       = format_sql(data_received["lname"]),
                                     cnp         = format_sql(data_received["cnp"]),
                                     birthday    = format_sql(data_received["birthday"]),

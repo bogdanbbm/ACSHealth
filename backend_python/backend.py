@@ -39,6 +39,7 @@ def validate_json(list_of_fields, json):
             return False
     return True
 # import all modules
+import medical_data
 import medic_data
 import identity
 import images
