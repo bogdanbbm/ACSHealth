@@ -1,5 +1,6 @@
-from backend import validate_json, mysql, login_details
 from flask import Blueprint, make_response, request
+identity_blueprint = Blueprint('identity', __name__)
+from backend import validate_json, mysql, login_details
 from sys import stderr
 from uuid import uuid4
 from email_module import compute_email
@@ -7,7 +8,6 @@ import jwt
 from datetime import datetime, timedelta
 
 
-identity_blueprint = Blueprint('identity', __name__)
 
 @identity_blueprint.route('/register/<email_uid>', methods = ["GET"])
 def process_verification(email_uid : str):

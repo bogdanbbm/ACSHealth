@@ -1,12 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from identity import identity_blueprint
 # all of these are used for imports in the different modules
 
 app = Flask(__name__)
 
-app.register_blueprint(identity_blueprint)
 
 # Configure MySQL connection
 # TODO: get these from env
@@ -37,10 +35,10 @@ def validate_json(list_of_fields, json):
     return True
 
 # import all modules
-import medical_data
-import medic_data
-import images
-import personal_data
+# import medical_data
+# import medic_data
+# import images
+# import personal_data
 
 class login_details(mysql.Model):
     id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
@@ -62,4 +60,6 @@ if __name__ == '__main__':
     # TODO: when running in prod delete debug=True
     with app.app_context():
         mysql.create_all()
+    from identity import identity_blueprint
+    app.register_blueprint(identity_blueprint)
     app.run(host='0.0.0.0', port=5000, debug=True)
