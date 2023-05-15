@@ -1,11 +1,41 @@
-from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response
+from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json
 from medic_data import get_login_id
 
 @app.route('/patient_data/<username>', methods = ["GET", "POST", "DELETE"])
 def personal_data(username):
     cur = mysql.connection.cursor()
+    
     if request.method == "GET":
-        pass
+        cur.execute("SELECT * FROM PERSONAL_DATA WHERE ID = {}".format(get_login_id(username)))
+        response_db = cur.fetchall()
+        if response_db is not None:
+            personal = []
+            for entry in response_db:
+                """
+                ID          int NOT NULL,
+                SUR_NAME    varchar(255),
+                LAST_NAME   varchar(255),
+                CNP         varchar(20),
+                BIRTHDATE   DATE,
+                SEX         varchar(1),
+                HEIGHT      FLOAT,
+                SGROUP      varchar(2),
+                RH          varchar(2),
+                """
+
+                personal.append({"sur_name": entry[1], 
+                                 "last_name": entry[2], 
+                                 "cnp": entry[3], 
+                                 "birthdate": entry[4],
+                                 "sex": entry[5],
+                                 "height": entry[6],
+                                 "sgroup": entry[7],
+                                 "rh": entry[8]
+                                 })
+            return make_response(json.dumps(personal), 200)
+        cur.close()
+        return make_response({"message": "No data found"}, 400)
+    
     elif request.method == "POST":
         data_received = request.get_json()
         if not validate_json(["fname", "lname", "cnp", "birthday",\
