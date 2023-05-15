@@ -19,18 +19,26 @@ def personal_data(username):
                 BIRTHDATE   DATE,
                 SEX         varchar(1),
                 HEIGHT      FLOAT,
-                SGROUP      varchar(2),
+                bloodGroup      varchar(2),
                 RH          varchar(2),
                 """
+                alergyList = []
+                cur.execute("SELECT ALERGY FROM alergyList WHERE ID = {}".format(get_login_id(username)))
+                response_alergy = cur.fetchall()
+                if response_alergy is not None:
+                    for alergy in response_alergy:
+                        alergyList.append(alergy[0])
 
-                personal.append({"sur_name": entry[1], 
-                                 "last_name": entry[2], 
+                personal.append({"firstName": entry[1], 
+                                 "lastName": entry[2], 
                                  "cnp": entry[3], 
-                                 "birthdate": entry[4],
+                                 "birthday": entry[4],
                                  "sex": entry[5],
                                  "height": entry[6],
-                                 "sgroup": entry[7],
-                                 "rh": entry[8]
+                                 "bloodGroup": entry[7],
+                                 "rh": entry[8],
+                                 "alergyList": alergyList,
+                                 "weight": entry[9],
                                  })
             return make_response(json.dumps(personal), 200)
         cur.close()
@@ -38,9 +46,9 @@ def personal_data(username):
     
     elif request.method == "POST":
         data_received = request.get_json()
-        if not validate_json(["fname", "lname", "cnp", "birthday",\
+        if not validate_json(["firstName", "lastName", "cnp", "birthday",\
                               "sex", "height", "weight",
-                              "sgroup", "rh", "alergy_list"], data_received)\
+                              "bloodGroup", "rh", "alergyList"], data_received)\
         and\
         not validate_json(["new_weight"], data_received)\
         and\
@@ -50,7 +58,7 @@ def personal_data(username):
         if data_received["sex"] not in ["M", "F"]:
             cur.close()
             return make_response({"message": "Sex should be M or F"}, 400)
-        # TODO: check date format, sgroup, rh, cnp, alergy_list
+        # TODO: check date format, bloodGroup, rh, cnp, alergyList
         if not "new_weight" in data_received:
             login_id = get_login_id(username)
             if login_id == -1:
@@ -64,20 +72,20 @@ def personal_data(username):
                                                             BIRTHDATE,
                                                             SEX,
                                                             HEIGHT,
-                                                            SGROUP,
+                                                            bloodGroup,
                                                             RH)
-                                    VALUES ({login_id}, {sname}, {lname},
+                                    VALUES ({login_id}, {firstName}, {lastName},
                                             {cnp}, {birthday}, {sex},
-                                            {height}, {sgroup}, {rh})"""
+                                            {height}, {bloodGroup}, {rh})"""
                                 .format(
                                     login_id    = login_id,
-                                    sname       = format_sql(data_received["fname"]),
-                                    lname       = format_sql(data_received["lname"]),
+                                    firstName       = format_sql(data_received["firstName"]),
+                                    lastName       = format_sql(data_received["lastName"]),
                                     cnp         = format_sql(data_received["cnp"]),
                                     birthday    = format_sql(data_received["birthday"]),
                                     sex         = format_sql(data_received["sex"]),
                                     height      = data_received["height"],
-                                    sgroup      = format_sql(data_received["sgroup"]),
+                                    bloodGroup      = format_sql(data_received["bloodGroup"]),
                                     rh          = format_sql(data_received["rh"])
                                 ))
             except Exception as e:
@@ -101,9 +109,9 @@ def personal_data(username):
             return make_response({"message": "Database insertion error"}, 500)
         mysql.connection.commit()
         try:
-            if "alergy_list" in data_received:
-                for alergy in data_received["alergy_list"]:
-                    cur.execute("""INSERT INTO ALERGY_LIST     (ID,
+            if "alergyList" in data_received:
+                for alergy in data_received["alergyList"]:
+                    cur.execute("""INSERT INTO alergyList     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(
@@ -112,7 +120,7 @@ def personal_data(username):
                             ))
                     mysql.connection.commit()
             elif "new_alergy" in data_received:
-                cur.execute("""INSERT INTO ALERGY_LIST     (ID,
+                cur.execute("""INSERT INTO alergyList     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(
