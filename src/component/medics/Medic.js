@@ -64,7 +64,7 @@ function Medic({ medic, token }) {
                                     {token && <button onClick={handleOpenAddReview}>Add review</button>}
                                     <Modal className="add-review-modal" onClose={handleCloseAddReview} open={openAddReview}>
                                         <div className="add-review-modal-container">
-                                            <AddReview token={token} />
+                                            <AddReview token={token} medicUsername={medic.username} closeModal={handleCloseAddReview}/>
                                         </div>
                                     </Modal>
                                 </div>
