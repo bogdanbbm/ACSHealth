@@ -1,13 +1,13 @@
 from flask import Blueprint, make_response, request
-identity_blueprint = Blueprint('identity', __name__)
-from backend import validate_json, mysql, login_details
+from utils import mysql, validate_json
 from sys import stderr
 from uuid import uuid4
 from email_module import compute_email
 import jwt
 from datetime import datetime, timedelta
+from models import login_details
 
-
+identity_blueprint = Blueprint('identity', __name__)
 
 @identity_blueprint.route('/register/<email_uid>', methods = ["GET"])
 def process_verification(email_uid : str):
@@ -17,6 +17,7 @@ def process_verification(email_uid : str):
     """
     print("id-ul", email_uid, file=stderr)
     user = login_details.query.filter_by(mail_uuid=email_uid).first()
+
     if user.mail_uuid != None:
         user.mail_check = 'Y'
         mysql.session.commit()

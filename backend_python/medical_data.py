@@ -13,7 +13,7 @@ def get_medical_data(patient_username):
                 .format(login_id))
     consultations = cur.fetchall()
     if consultations == ():
-        return make_response({"message": "No consultations found"}, 200)
+        return make_response({"message": "No consultations found"}, 204)
     cons_list = []
     for cons in consultations:
         cur.execute("""SELECT SNAME, LNAME FROM MEDIC_DETAILS WHERE ID = {}""".format(cons[0]))
@@ -29,7 +29,7 @@ def get_medical_data(patient_username):
 def post_medical_data(medic_username):
     cur = mysql.connection.cursor()
     data_received = request.get_json()
-    if not validate_json(["patient_username", "treatment", "consultation_date"],
+    if not validate_json(["patientUsername", "treatment", "consultationDate"],
                             data_received):
         cur.close()
     login_id = get_login_id(medic_username)
