@@ -22,6 +22,5 @@ def compute_email(email, uuid):
     body = body.format(str(uuid))
     sender = "official.acshealth@gmail.com"
     recipients = [email]
-    # TODO: get this from env
     password = "kjgctwqjifqovwyk"
     send_email(subject, body, sender, recipients, password)
