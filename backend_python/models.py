@@ -1,8 +1,6 @@
 from utils import mysql
 from sqlalchemy import LargeBinary
 
-# TODO: create all database models (follow dbsetup.sql for a guideline)
-
 class login_details(mysql.Model):
     id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
     username = mysql.Column(mysql.String(255))
@@ -31,8 +29,8 @@ class images(mysql.Model):
 
 class medic_details(mysql.Model):
     id = mysql.Column(mysql.Integer, primary_key=True)
-    fname = mysql.Column(mysql.String(255))
-    lname = mysql.Column(mysql.String(255))
+    fname = mysql.Column(mysql.String(255), default = " ")
+    lname = mysql.Column(mysql.String(255), default = " ")
     rating = mysql.Column(mysql.Float)
     image_stamp = mysql.Column(mysql.TIMESTAMP, nullable=False)
 
@@ -42,3 +40,27 @@ class medic_details(mysql.Model):
         self.lname = lname
         self.rating = rating
         self.image_stamp = image_stamp
+
+class reviews(mysql.Model):
+    id_review = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    id_medic = mysql.Column(mysql.Integer, nullable=False)
+    review = mysql.Column(mysql.TEXT)
+    rating = mysql.Column(mysql.Float)
+
+    def __init__(self, id_medic, review, rating):
+        self.id_medic = id_medic
+        self.review = review
+        self.rating = rating
+
+class consultations(mysql.Model):
+    id_consult = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    id_medic = mysql.Column(mysql.Integer, nullable=False)
+    id_patient = mysql.Column(mysql.Integer, nullable=False)
+    consult_date = mysql.Column(mysql.DATE)
+    treatment = mysql.Column(mysql.TEXT)
+
+    def __init__(self, id_medic, id_patient, consult_date, treatment):
+        self.id_medic = id_medic
+        self.id_patient = id_patient
+        self.consult_date = consult_date
+        self.treatment = treatment
