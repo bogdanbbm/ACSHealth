@@ -1,70 +1,75 @@
-from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json, datetime
-from medic_data import get_login_id
 
-@app.route("/medical_data/<patient_username>", methods = ["GET"])
+from flask import Blueprint, make_response, request
+from utils import mysql, validate_json
+from db_ops import get_login_id
+from sys import stderr
+from datetime import datetime
+from models import login_details, medic_details, consultations
+from json import dumps
+
+medical_data_blueprint = Blueprint("medical_data", __name__)
+
+
+@medical_data_blueprint.route("/medical_data/<patient_username>", methods = ["GET"])
 def get_medical_data(patient_username):
-    cur = mysql.connection.cursor()
+    # get id for provided username to check if it exists
     login_id = get_login_id(patient_username)
     if login_id == -1:
-        cur.close()
         return make_response({"message": "Bad username"}, 400)
-    cur.execute("""SELECT ID_MEDIC, ID_PATIENT, CONSULTATION, TREATMENT
-                    FROM CONSULTATION_LIST WHERE ID_PATIENT = {}"""
-                .format(login_id))
-    consultations = cur.fetchall()
-    if consultations == ():
-        return make_response({"message": "No consultations found"}, 200)
-    cons_list = []
-    for cons in consultations:
-        cur.execute("""SELECT SNAME, LNAME FROM MEDIC_DETAILS WHERE ID = {}""".format(cons[0]))
-        medic_name = cur.fetchone()
-        if medic_name is None:
-            cur.close()
-            return make_response({"message": "Medic has not completed personal data"}, 400)
-        cons_list.append({"medic": medic_name[0]+" "+medic_name[1],
-                          "date":str(cons[2]), "treatment":cons[3]})
-    return make_response(json.dumps(cons_list), 200)
 
-@app.route("/medical_data/<medic_username>", methods = ["POST"])
+    # query database for all consultations for the patient
+    cons_res = consultations.query.filter_by(id_patient=login_id).all()
+    if cons_res == []:
+        return make_response({"message": "No consultations found"}, 204)
+    cons_list = []
+    for cons in cons_res:
+        # compute list of consultations and return it
+        
+        med = login_details.query.filter_by(id=cons.id_medic).first()
+        # if at any point a medic for one of the consultations hasn't completed
+        # the registration process return an error
+        if med.completed_reg == 'N':
+            return make_response(dumps({"message": "Medic has not completed personal data"}), 400)
+        
+        medd = medic_details.query.filter_by(id=cons.id_medic).first()
+        med_name = medd.fname + " " + medd.lname
+        cons_list.append({"medic": med_name,
+                          "date":str(cons.consult_date), "treatment":cons.treatment})
+    
+    return make_response(dumps(cons_list), 200)
+
+
+@medical_data_blueprint.route("/medical_data/<medic_username>", methods = ["POST"])
 def post_medical_data(medic_username):
-    cur = mysql.connection.cursor()
+    # validate json
     data_received = request.get_json()
-    if not validate_json(["patient_username", "treatment", "consultation_date"],
+    if not validate_json(["patientUsername", "treatment", "consultationDate"],
                             data_received):
-        cur.close()
+        return make_response({"message": "Invalid json"}, 400)
+
+    # get id for provided username to check if it exists
     login_id = get_login_id(medic_username)
     if login_id == -1:
-        cur.close()
         return make_response({"message": "Bad username"}, 400)
     
-    patient_id = get_login_id(data_received["patient_username"])
+    # get id for provided patient to check if it exists
+    patient_id = get_login_id(data_received["patientUsername"])
     if patient_id == -1:
-        cur.close()
         return make_response({"message": "Bad request"}, 400)
     
-    cur.execute("""SELECT IS_MEDIC
-                    FROM LOGIN_DETAILS
-                    WHERE USERNAME = {}""".format(format_sql(medic_username)))
-    is_medic = cur.fetchone()
-    if is_medic is not None and is_medic == 'N':
+    # check if user is medic and deny permission if not
+    user = login_details.query.filter_by(username=medic_username).first()
+    if user is not None and user.is_medic == 'N':
         return make_response({"message": "Permission denied"}, 403)
+    
+    # insert consultation into database
     try:
-        date = datetime.strptime(data_received["consultation_date"], "%d/%m/%Y")
-        cur.execute("""INSERT
-                    INTO CONSULTATION_LIST (ID_MEDIC, ID_PATIENT, CONSULTATION,
-                    TREATMENT) VALUES ({med_id}, {pat_id}, {cons_date}, {treat})"""
-                    .format(med_id = login_id,
-                            pat_id = patient_id,
-                            cons_date = format_sql(date.strftime('%Y-%m-%d %H:%M:%S')),
-                            treat = format_sql(data_received["treatment"])))
-        mysql.connection.commit()
-        cur.close()
+        date = datetime.strptime(data_received["consultationDate"], "%d/%m/%Y")
+        cons = consultations(login_id, patient_id, date.strftime('%Y-%m-%d %H:%M:%S'),
+                            data_received["treatment"])
+        mysql.session.add(cons)
+        mysql.session.commit()
         return make_response({"message": "Consultation added successfully"}, 201)
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message": "Database insertion error"}, 500)
-
-@app.route("/medical_data/<username>", methods = ["DELETE"])
-def delete_medical_data(username):
-    pass

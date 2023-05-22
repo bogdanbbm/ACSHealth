@@ -1,36 +1,35 @@
-from __main__ import app, stderr, request, mysql, validate_json, abort, format_sql, make_response, \
-uuid4, compute_email, jwt, datetime, timedelta, jsonify
+from flask import Blueprint, make_response, request
+from utils import mysql, validate_json
+from sys import stderr
+from uuid import uuid4
+from email_module import compute_email
+import jwt
+from datetime import datetime, timedelta
+from models import login_details
 
-@app.route('/register/<email_uid>', methods = ["GET"])
+identity_blueprint = Blueprint('identity', __name__)
+
+
+@identity_blueprint.route('/register/<email_uid>', methods = ["GET"])
 def process_verification(email_uid : str):
     """
     The first 15 chars are reserved for the database id,
     the rest are the uuid for the email
     """
-    cur = mysql.connection.cursor()
     print("id-ul", email_uid, file=stderr)
-    cur.execute("SELECT MAIL_UUID FROM LOGIN_DETAILS WHERE MAIL_UUID = '{}'"
-                .format(email_uid))
-    if cur.fetchone()[0] != None:
-        query = """
-            UPDATE LOGIN_DETAILS
-            SET MAIL_CHECK = 'Y'
-            WHERE   MAIL_UUID = '{id_given}';
-        """.format(
-            id_given = email_uid
-        )
-        cur.execute(query)
-        mysql.connection.commit()
-        # test that it works:
-        cur.execute("SELECT * FROM LOGIN_DETAILS WHERE MAIL_UUID = '{}'".format(email_uid))
-        print(cur.fetchone(), file=stderr)
-        cur.close()
+    # query database for email
+    user = login_details.query.filter_by(mail_uuid=email_uid).first()
+
+    # if email exists, mark it as verified
+    if user.mail_uuid != None:
+        user.mail_check = 'Y'
+        mysql.session.commit()
         return "<p style=\"position: fixed;top: 50%;left: 50%;\">Toutes mes felicitations monsieur!</p>"
     else:
         return make_response({"message": "Bad uuid"}, 400)
- 
- 
-@app.route('/register', methods = ["POST"])
+
+
+@identity_blueprint.route('/register', methods = ["POST"])
 def register():
     """
     This method will receive a JSON containing
@@ -40,6 +39,7 @@ def register():
     password       -> str (sha256)
     isMedic        -> int (either 0 or 1)
     """
+    # validate json and generate uuid
     generated_uuid = uuid4()
     data_received = request.get_json()
     if not validate_json(["email", "username", "password", "isMedic"], data_received):
@@ -48,50 +48,34 @@ def register():
         return make_response({"message": "isMedic should be 0 or 1!"}, 400)
     if data_received["username"] == "" or data_received["password"] == "":
         return make_response({"message": "Username or password empty"}, 400)
-    cur = mysql.connection.cursor()
-    # check whether the username is taken or not
+
+    # check if account already exists
+    id = None
     try:
-        cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
-                .format(data_received["username"]))
+        id = login_details.query.filter_by(username=data_received["username"]).first()
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message": "Db selection error"}, 500)
-    db_response = cur.fetchone()
-    if db_response is not None:
-        # it exists already
-        cur.close()
+    if id is not None:
         return make_response({"message": "Username already exists"}, 400)
-    query = """
-        INSERT INTO LOGIN_DETAILS   (USERNAME,
-                                    PASS_HASH,
-                                    IS_MEDIC,
-                                    COMPLETED_REG,
-                                    MAIL_UUID)
-            VALUES ({username},
-                    {password}, {isMedic},
-                    {completed_reg},
-                    {mail_uuid});
-    """.format(
-        username        = format_sql(data_received["username"]),
-        password        = format_sql(data_received["password"]),
-        isMedic         = format_sql('Y' if int(data_received["isMedic"]) == 1 else 'N'),
-        completed_reg   = format_sql('N' if int(data_received["isMedic"]) == 1 else 'Y'),
-        mail_uuid       = format_sql(str(generated_uuid))
-    )
-    print(query, file=stderr)
+
+    # create user and insert it into database
+    user = login_details(data_received["username"], data_received["password"],\
+                        'Y' if int(data_received["isMedic"]) == 1 else 'N', str(generated_uuid),\
+                        'N' if int(data_received["isMedic"]) == 1 else 'Y')
     try:
-        cur.execute(query)
+        mysql.session.add(user)
+        mysql.session.commit()
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message":"Db insertion error"}, 500)
-    mysql.connection.commit()
-    cur.close()
+
+    # send verification email
     compute_email(data_received["email"], generated_uuid)
     return make_response({"message": "Success"}, 201)
 
-@app.route('/login', methods = ["POST"])
+
+@identity_blueprint.route('/login', methods = ["POST"])
 def login():
     """
     This method will receive a JSON containing
@@ -99,35 +83,31 @@ def login():
     username        -> str
     password       -> str (sha256)
     """
+    # validate json
     data_received = request.get_json()
     if not validate_json(["username", "password"], data_received):
         return make_response({"message": "Invalid json"}, 400)
     if data_received["username"] == "" or data_received["password"] == "":
         return make_response({"message": "Username or password empty"}, 400)
-    cur = mysql.connection.cursor()
-    query = """
-        SELECT IS_MEDIC, MAIL_CHECK
-        FROM LOGIN_DETAILS
-        WHERE USERNAME = {username} AND PASS_HASH = {password};
-    """.format(
-        username    = format_sql(data_received["username"]),
-        password   = format_sql(data_received["password"]),
-    )
-    print(query, file=stderr)
-    cur.execute(query)
-    query_res = cur.fetchone()
-    if query_res is None:
+
+    # query database for user
+    user = login_details.query.filter_by(username=data_received["username"])\
+                              .filter_by(password=data_received["password"]).first()
+
+    # check whether account exists or not
+    if user is None:
         print("Account does not exist", file=stderr)
-        cur.close()
         return make_response({"message": "Account does not exist"}, 400)
-    if query_res[1] != 'Y':
+
+    # check whether user has verified email or not
+    if user.mail_check != 'Y':
         print("Email not verified", file=stderr)
-        cur.close()
         return make_response({"message": "Email not verified"}, 400)
+
+    # generate and return jwt for user
     print("Login successful!", file=stderr)
     token = jwt.encode({
-        'isMedic': 0 if query_res[0] == 'N' else 1,
+        'isMedic': 0 if user.is_medic == 'N' else 1,
         'exp' : datetime.utcnow() + timedelta(minutes = 30)
     }, "secret")
-    cur.close()
-    return make_response(jsonify({'token' : token}), 201)
+    return make_response({'token' : token}, 201)

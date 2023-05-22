@@ -20,7 +20,7 @@ requests.post("http://{ip}:{port}/register".format(ip = ip, port = port),
 
 # add medic data and images
 stamp = requests.post("http://{ip}:{port}/medic_list".format(ip = ip, port = port),
-               json={"username": "ceva1", "fname": "da", "lname": "nu"}).json()["timestamp"]
+               json={"username": "ceva1", "firstName": "da", "lastName": "nu"}).json()["timestamp"]
 file = {'file': open('absolut banal.jpg', 'rb')}
 print(stamp)
 requests.post("http://{ip}:{port}/images/{stamp}".format(ip = ip, port = port, stamp = stamp),
@@ -28,14 +28,14 @@ requests.post("http://{ip}:{port}/images/{stamp}".format(ip = ip, port = port, s
 
 sleep(1)
 stamp = requests.post("http://{ip}:{port}/medic_list".format(ip = ip, port = port),
-               json={"username": "ceva2", "fname": "da", "lname": "nu"}).json()["timestamp"]
+               json={"username": "ceva2", "firstName": "da", "lastName": "nu"}).json()["timestamp"]
 file = {'file': open('john.jpg', 'rb')}
 requests.post("http://{ip}:{port}/images/{stamp}".format(ip = ip, port = port, stamp = stamp),
               files=file)
 
 sleep(1)
 stamp = requests.post("http://{ip}:{port}/medic_list".format(ip = ip, port = port),
-               json={"username": "ceva3", "fname": "da", "lname": "nu"}).json()["timestamp"]
+               json={"username": "ceva3", "firstName": "da", "lastName": "nu"}).json()["timestamp"]
 file = {'file': open('john2.png', 'rb')}
 resp = requests.post("http://{ip}:{port}/images/{stamp}".format(ip = ip, port = port, stamp = stamp),
               files=file)
