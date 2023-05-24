@@ -17,6 +17,7 @@ class login_details(mysql.Model):
         self.mail_uuid = mail_uuid
         self.completed_reg = completed_reg
 
+
 class images(mysql.Model):
     id_medic = mysql.Column(mysql.Integer, primary_key=True)
     image_stamp = mysql.Column(mysql.TIMESTAMP, primary_key=True)
@@ -26,6 +27,7 @@ class images(mysql.Model):
         self.id_medic = id_medic
         self.image_stamp = image_stamp
         self.photo = photo
+
 
 class medic_details(mysql.Model):
     id = mysql.Column(mysql.Integer, primary_key=True)
@@ -43,6 +45,7 @@ class medic_details(mysql.Model):
         self.image_stamp = image_stamp
         self.clinic_id = clinic_id
 
+
 class reviews(mysql.Model):
     id_review = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
     id_medic = mysql.Column(mysql.Integer, nullable=False)
@@ -53,6 +56,7 @@ class reviews(mysql.Model):
         self.id_medic = id_medic
         self.review = review
         self.rating = rating
+
 
 class consultations(mysql.Model):
     id_consult = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
@@ -88,3 +92,51 @@ class appointments(mysql.Model):
         self.id_medic = id_medic
         self.id_patient = id_patient
         self.appointment_date = appointment_date
+
+
+class patient_data(mysql.Model):
+    id = mysql.Column(mysql.Integer, primary_key=True)
+    first_name = mysql.Column(mysql.String(255))
+    last_name = mysql.Column(mysql.String(255))
+    cnp = mysql.Column(mysql.String(20))
+    birthdate = mysql.Column(mysql.DATE)
+    sex = mysql.Column(mysql.String(1))
+    height = mysql.Column(mysql.Float)
+    sgroup = mysql.Column(mysql.String(2))
+    rh = mysql.Column(mysql.String(2))
+
+    def __init__(self, first_name, last_name, cnp, birthdate):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.cnp = cnp
+        self.birthdate = birthdate
+
+
+class weight_history(mysql.Model):
+    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    patient_id = mysql.Column(mysql.Integer, nullable=False)
+    weight_value = mysql.Column(mysql.Float, nullable=False)
+
+    def __init__(self, patient_id, weight_value):
+        self.patient_id = patient_id
+        self.weight_value = weight_value
+
+
+class allergy_list(mysql.Model):
+    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    patient_id = mysql.Column(mysql.Integer, nullable=False)
+    allergy = mysql.Column(mysql.String(50), nullable=False)
+
+    def __init__(self, patient_id, allergy):
+        self.patient_id = patient_id
+        self.allergy = allergy
+
+
+class blood_donation_history(mysql.Model):
+    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    patient_id = mysql.Column(mysql.Integer, nullable=False)
+    donation_date = mysql.Column(mysql.DATE, nullable=False)
+
+    def __init__(self, patient_id, donation_date):
+        self.patient_id = patient_id
+        self.donation_date = donation_date
