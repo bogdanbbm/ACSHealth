@@ -1,164 +1,148 @@
-from __main__ import app, mysql, validate_json, format_sql
-from flask import request, make_response
+from flask import Blueprint, make_response, request
+from utils import mysql, validate_json
 from sys import stderr
-import json
-import time
 from datetime import datetime
-from sys import stderr
-# all of these are used for imports in the different modules
+from models import medic_details, reviews, login_details
+from db_ops import get_login_id, get_username
+from json import dumps
+import time
+from sqlalchemy.sql import func
 
-def get_login_id(username):
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
-                    .format(username))
-    login_id = -1
-    response_db = cur.fetchone()
-    if response_db is not None and response_db[0] is not None:
-        login_id = int(response_db[0])
-    return login_id
+medic_blueprint = Blueprint("medics", __name__)
 
-@app.route("/medic_list", methods = ["GET"])
+
+@medic_blueprint.route("/medic_list", methods = ["GET"])
 def get_medic_details():
-    cur = mysql.connection.cursor()
-    cur.execute("SELECT FNAME, LNAME, RATING, IMAGE_STAMP FROM MEDIC_DETAILS")
-    response_db = cur.fetchall()
-    if response_db is not None:
+    # query database for all medics
+    medics = medic_details.query.all()
+    if medics is not None:
         list_of_medics = []
-        for entry in response_db:
-            list_of_medics.append({"fname": entry[0], "lname": entry[1],
-                                "rating": "{:.2f}".format(float(entry[2])) if entry[2] is not None else 0,
-                                "image_stamp": str(entry[3]).replace(" ", "+")})
-        cur.close()
-        return make_response(json.dumps(list_of_medics), 200)
-    cur.close()
-    return make_response({"message": "No medics found"}, 400)
 
-@app.route("/medic_list", methods = ["POST"])
+        # compute list of medics
+        for entry in medics:
+            list_of_medics.append({"firstName": entry.fname, "lastName": entry.lname,
+                                "rating": "{:.2f}".format(float(entry.rating)) if entry.rating is not None else 0,
+                                "username": get_username(entry.id),
+                                "imageStamp": str(entry.image_stamp).replace(" ", "+")})
+        return make_response(dumps(list_of_medics), 200)
+
+    return make_response({"message": "No medics found"}, 204)
+
+
+@medic_blueprint.route("/medic_list", methods = ["POST"])
 def post_medic_details():
-        cur = mysql.connection.cursor()
+        # validate json
         data_received = request.get_json()
-        if not validate_json(["username", "fname", "lname"], data_received):
-            cur.close()
+        if not validate_json(["username", "firstName", "lastName"], data_received):
             return make_response({"message": "Invalid json"}, 400)
-        cur.execute("SELECT ID FROM LOGIN_DETAILS WHERE USERNAME = '{}'"
-                    .format(data_received["username"]))
+
+        # get id for provided username to check if it exists
         medic_id = get_login_id(data_received["username"])
         if medic_id == -1:
             return make_response({"message": "Bad username"}, 400)
+
+        # generate a timestamp for future use with image uploading
         timestamp = datetime.fromtimestamp(time.time())\
                                                     .strftime('%Y-%m-%d %H:%M:%S')
-        query = """
-        INSERT INTO MEDIC_DETAILS (ID, FNAME,
-                                    LNAME,
-                                    RATING,
-                                    IMAGE_STAMP)
-            VALUES ({medic_id}, {fname},
-                    {lname}, {rating}, {stamp});
-        """.format(
-            medic_id    = medic_id,
-            fname       = format_sql(data_received["fname"]),
-            lname       = format_sql(data_received["lname"]),
-            rating      = 'NULL',
-            stamp       = format_sql(timestamp)
-        )
-        print(query, file=stderr)
+        # insert medic info into database
         try:
-            cur.execute(query)
+            medic_info = medic_details(medic_id, data_received["firstName"],
+                                       data_received["lastName"], mysql.sql.null(), timestamp)
+            mysql.session.add(medic_info)
+            med = login_details.query.filter_by(id=medic_id).first()
+            med.completed_reg = 'Y'
+            mysql.session.commit()
         except Exception as e:
             print(e, file=stderr)
-            cur.close()
             return make_response({"message": "Duplicate entry for medic"}, 400)
-        mysql.connection.commit()
-        cur.close()
+
         return make_response({"message": "Success!", "timestamp": str(timestamp.replace(" ", "+"))}, 201)
 
-@app.route("/medic_reviews/<medic_username>", methods = ["GET"])
+
+@medic_blueprint.route("/medic_reviews/<medic_username>", methods = ["GET"])
 def get_medic_reviews(medic_username):
-    cur = mysql.connection.cursor()
+    # get id for provided username to check if it exists
     medic_id = get_login_id(medic_username)
     if medic_id == -1:
-        cur.close()
         return make_response({"message": "Bad username"}, 400)
-    cur.execute("SELECT REVIEW, RATING, ID_REVIEW FROM REVIEWS WHERE ID_MEDIC = '{}'".format(medic_id))
-    response_db = cur.fetchall()
-    if response_db is not None:
-        list_of_reviews = []
-        for entry in response_db:
-            list_of_reviews.append({"review": entry[0], "rating": entry[1], "id": entry[2]})
-        cur.close()
-        return make_response(json.dumps(list_of_reviews), 200)
-    cur.close()
-    return make_response({"message": "No reviews found for username " + medic_username}, 400)
 
-@app.route("/medic_reviews/<medic_username>", methods = ["POST"])
+    # query database for all of the medic's reviews
+    all_revs = reviews.query.filter_by(id_medic=medic_id).all()
+    
+    # check if there are any reviews
+    if all_revs == []:
+        return make_response({"message": "No reviews found for username " + medic_username}, 204)
+    
+    list_of_reviews = []
+    # compute the list of reviews and return it
+    for entry in all_revs:
+        list_of_reviews.append({"review": entry.review, "rating": entry.rating, "idReview": entry.id_review})
+    return make_response(dumps(list_of_reviews), 200)
+
+    
+
+
+@medic_blueprint.route("/medic_reviews/<medic_username>", methods = ["POST"])
 def post_medic_reviews(medic_username):
-    cur = mysql.connection.cursor()
+    # validate json
     data_received = request.get_json()
     if not validate_json(["review", "rating"], data_received):
-        cur.close()
         return make_response({"message": "Invalid json"}, 400)
+
+    # get id for provided username to check if it exists
     medic_id = get_login_id(medic_username)
     if medic_id == -1:
-        cur.close()
         return make_response({"message": "Bad username"}, 400)
+
+    # add review to the database
     try:
-        cur.execute("""INSERT INTO REVIEWS    ( ID_MEDIC,
-                                                REVIEW,
-                                                RATING)
-                        VALUES ({medic_id}, {review}, {rating})"""
-                    .format(
-                        medic_id    = medic_id,
-                        review      = format_sql(data_received["review"]),
-                        rating      = float(data_received["rating"])
-                    ))
-        mysql.connection.commit()
+        rev = reviews(medic_id, data_received["review"], float(data_received["rating"]))
+        mysql.session.add(rev)
+        mysql.session.commit()
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message": "Database insertion error"}, 500)
-    # update medic rating
+
+    # recalculate medic's average rating to account for the new review
     try:
-        cur.execute("UPDATE MEDIC_DETAILS \
-                    SET RATING = \
-                    (SELECT AVG(RATING) FROM REVIEWS WHERE ID_MEDIC = '{}')"
-                    .format(get_login_id(medic_username)))
-        mysql.connection.commit()
+        med = medic_details.query.filter_by(id=medic_id).first()
+
+        new_rating = mysql.session.query(func.avg(reviews.rating).label('average'))\
+                    .filter(reviews.id_medic==medic_id)
+        med.rating = new_rating
+
+        mysql.session.commit()
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message": "Database update error"}, 500)
-    cur.close()
+
     return make_response({"message": "Review added successfully"}, 201)
 
-@app.route("/medic_reviews", methods = ["DELETE"])
+
+@medic_blueprint.route("/medic_reviews", methods = ["DELETE"])
 def delete_medic_reviews():
-    cur = mysql.connection.cursor()
+    # validate json
     data_received = request.get_json()
-    if not validate_json(["review_id"], data_received):
-        cur.close()
+    if not validate_json(["idReview"], data_received):
         return make_response({"message": "Invalid json"}, 400)
+
+    # query the database for wanted review
+    rev = None
     try:
-        cur.execute("SELECT ID_REVIEW FROM REVIEWS WHERE ID_REVIEW = '{}'"
-                    .format(data_received["review_id"]))
+        rev = reviews.query.filter_by(id_review=data_received["idReview"]).first()
     except Exception as e:
         print(e, file=stderr)
-        cur.close()
         return make_response({"message": "Db selection error"}, 400)
-    response_db = cur.fetchone()
-    if response_db is not None:
-        # delete from reviews
+
+    # check if the review exists and if it does remove it
+    if rev is not None:
         try:
-            cur.execute("DELETE FROM REVIEWS WHERE ID_REVIEW = '{}'".format(response_db[0]))
+            mysql.session.delete(rev)
+            mysql.session.commit()
         except Exception as e:
             print(e, file=stderr)
-            cur.close()
             return make_response({"message": "Db deletion error"}, 400)
-        mysql.connection.commit()
     else:
-        cur.close()
         return make_response({"message": "Wrong review id"}, 400)
-    return make_response({"message": "Success"}, 201)
 
-
-# medical data:
-# - consultatii + tratament, donarea de sange + data
+    return make_response({"message": "Success"}, 200)
