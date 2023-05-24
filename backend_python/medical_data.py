@@ -20,7 +20,8 @@ def get_medical_data(patient_username):
     # query database for all consultations for the patient
     cons_res = consultations.query.filter_by(id_patient=login_id).all()
     if cons_res == []:
-        return make_response({"message": "No consultations found"}, 204)
+        return make_response({}, 204)
+
     cons_list = []
     for cons in cons_res:
         # compute list of consultations and return it
