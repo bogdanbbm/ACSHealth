@@ -32,14 +32,16 @@ class medic_details(mysql.Model):
     fname = mysql.Column(mysql.String(255), default = " ")
     lname = mysql.Column(mysql.String(255), default = " ")
     rating = mysql.Column(mysql.Float)
+    clinic_id = mysql.Column(mysql.Integer)
     image_stamp = mysql.Column(mysql.TIMESTAMP, nullable=False)
 
-    def __init__(self, id, fname, lname, rating, image_stamp):
+    def __init__(self, id, fname, lname, rating, image_stamp, clinic_id):
         self.id = id
         self.fname = fname
         self.lname = lname
         self.rating = rating
         self.image_stamp = image_stamp
+        self.clinic_id = clinic_id
 
 class reviews(mysql.Model):
     id_review = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
@@ -64,3 +66,25 @@ class consultations(mysql.Model):
         self.id_patient = id_patient
         self.consult_date = consult_date
         self.treatment = treatment
+
+
+class clinics(mysql.Model):
+    id_clinic = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    name_clinic = mysql.Column(mysql.String(255), nullable=False, unique=True)
+
+    def __init__(self, name_clinic):
+        self.name_clinic = name_clinic
+
+
+class appointments(mysql.Model):
+    id_appointment = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    id_medic = mysql.Column(mysql.Integer, nullable=False)
+    id_patient = mysql.Column(mysql.Integer, nullable=False)
+    id_clinic = mysql.Column(mysql.Integer, nullable=False)
+    appointment_date = mysql.Column(mysql.DATE, nullable=False)
+
+    def __init__(self, id_clinic, id_medic, id_patient, appointment_date):
+        self.id_clinic = id_clinic
+        self.id_medic = id_medic
+        self.id_patient = id_patient
+        self.appointment_date = appointment_date

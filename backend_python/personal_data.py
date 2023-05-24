@@ -119,7 +119,7 @@ def personal_data(username):
                             ))
                     mysql.connection.commit()
             elif "new_alergy" in data_received:
-                cur.execute("""INSERT INTO ALERGY_LIST     (ID,
+                cur.execute("""INSERT INTO ALLERGY_LIST     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(

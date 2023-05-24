@@ -15,7 +15,7 @@ medic_blueprint = Blueprint("medics", __name__)
 def get_medic_details():
     # query database for all medics
     medics = medic_details.query.all()
-    if medics is not None:
+    if medics != []:
         list_of_medics = []
 
         # compute list of medics
@@ -26,7 +26,7 @@ def get_medic_details():
                                 "imageStamp": str(entry.image_stamp).replace(" ", "+")})
         return make_response(dumps(list_of_medics), 200)
 
-    return make_response({"message": "No medics found"}, 204)
+    return make_response({}, 204)
 
 
 @medic_blueprint.route("/medic_list", methods = ["POST"])
@@ -46,8 +46,9 @@ def post_medic_details():
                                                     .strftime('%Y-%m-%d %H:%M:%S')
         # insert medic info into database
         try:
+            # TODO: get clinic id from front-end
             medic_info = medic_details(medic_id, data_received["firstName"],
-                                       data_received["lastName"], mysql.sql.null(), timestamp)
+                                       data_received["lastName"], mysql.sql.null(), timestamp, 0)
             mysql.session.add(medic_info)
             med = login_details.query.filter_by(id=medic_id).first()
             med.completed_reg = 'Y'
@@ -71,7 +72,7 @@ def get_medic_reviews(medic_username):
     
     # check if there are any reviews
     if all_revs == []:
-        return make_response({"message": "No reviews found for username " + medic_username}, 204)
+        return make_response({}, 204)
     
     list_of_reviews = []
     # compute the list of reviews and return it
