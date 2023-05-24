@@ -1,16 +1,53 @@
-from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response
+from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json
 from medic_data import get_login_id
 
 @app.route('/patient_data/<username>', methods = ["GET", "POST", "DELETE"])
 def personal_data(username):
     cur = mysql.connection.cursor()
+    
     if request.method == "GET":
-        pass
+        cur.execute("SELECT * FROM PATIENT_DATA WHERE ID = {}".format(get_login_id(username)))
+        response_db = cur.fetchall()
+        if response_db is not None:
+            personal = []
+            for entry in response_db:
+                """
+                ID          int NOT NULL,
+                SUR_NAME    varchar(255),
+                LAST_NAME   varchar(255),
+                CNP         varchar(20),
+                BIRTHDATE   DATE,
+                SEX         varchar(1),
+                HEIGHT      FLOAT,
+                bloodGroup      varchar(2),
+                RH          varchar(2),
+                """
+                alergyList = []
+                cur.execute("SELECT ALERGY FROM ALERGY_LIST WHERE ID = {}".format(get_login_id(username)))
+                response_alergy = cur.fetchall()
+                if response_alergy is not None:
+                    for alergy in response_alergy:
+                        alergyList.append(alergy[0])
+
+                personal.append({"firstName": entry[1], 
+                                 "lastName": entry[2], 
+                                 "cnp": entry[3], 
+                                 "birthday": str(entry[4]),
+                                 "sex": entry[5],
+                                 "height": entry[6],
+                                 "bloodGroup": entry[7],
+                                 "rh": entry[8],
+                                 "alergyList": alergyList,
+                                 })
+            return make_response(json.dumps(personal), 200)
+        cur.close()
+        return make_response({"message": "No data found"}, 400)
+    
     elif request.method == "POST":
         data_received = request.get_json()
-        if not validate_json(["fname", "lname", "cnp", "birthday",\
+        if not validate_json(["firstName", "lastName", "cnp", "birthday",\
                               "sex", "height", "weight",
-                              "sgroup", "rh", "alergy_list"], data_received)\
+                              "bloodGroup", "rh", "alergyList"], data_received)\
         and\
         not validate_json(["new_weight"], data_received)\
         and\
@@ -20,7 +57,7 @@ def personal_data(username):
         if data_received["sex"] not in ["M", "F"]:
             cur.close()
             return make_response({"message": "Sex should be M or F"}, 400)
-        # TODO: check date format, sgroup, rh, cnp, alergy_list
+        # TODO: check date format, bloodGroup, rh, cnp, alergyList
         if not "new_weight" in data_received:
             login_id = get_login_id(username)
             if login_id == -1:
@@ -28,7 +65,7 @@ def personal_data(username):
                 return make_response({"message": "Bad username"}, 400)
             try:
                 cur.execute("""INSERT INTO PATIENT_DATA     (ID,
-                                                            SUR_NAME,
+                                                            FIRST_NAME,
                                                             LAST_NAME,
                                                             CNP,
                                                             BIRTHDATE,
@@ -36,18 +73,18 @@ def personal_data(username):
                                                             HEIGHT,
                                                             SGROUP,
                                                             RH)
-                                    VALUES ({login_id}, {sname}, {lname},
+                                    VALUES ({login_id}, {firstName}, {lastName},
                                             {cnp}, {birthday}, {sex},
-                                            {height}, {sgroup}, {rh})"""
+                                            {height}, {bloodGroup}, {rh})"""
                                 .format(
                                     login_id    = login_id,
-                                    sname       = format_sql(data_received["fname"]),
-                                    lname       = format_sql(data_received["lname"]),
-                                    cnp         = format_sql(data_received["cnp"]),
+                                    firstName       = format_sql(data_received["firstName"]),
+                                    lastName       = format_sql(data_received["lastName"]),
+                                    cnp         = data_received["cnp"],
                                     birthday    = format_sql(data_received["birthday"]),
                                     sex         = format_sql(data_received["sex"]),
                                     height      = data_received["height"],
-                                    sgroup      = format_sql(data_received["sgroup"]),
+                                    bloodGroup      = format_sql(data_received["bloodGroup"]),
                                     rh          = format_sql(data_received["rh"])
                                 ))
             except Exception as e:
@@ -71,9 +108,9 @@ def personal_data(username):
             return make_response({"message": "Database insertion error"}, 500)
         mysql.connection.commit()
         try:
-            if "alergy_list" in data_received:
-                for alergy in data_received["alergy_list"]:
-                    cur.execute("""INSERT INTO ALLERGY_LIST     (ID,
+            if "alergyList" in data_received:
+                for alergy in data_received["alergyList"]:
+                    cur.execute("""INSERT INTO ALERGY_LIST     (ID,
                                                         ALERGY)
                                 VALUES ({login_id}, {alergy})"""
                             .format(
