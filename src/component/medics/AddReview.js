@@ -18,7 +18,7 @@ async function submitReview(review, token, medicUsername){
 
 function AddReview({ token, medicUsername, closeModal })
 {
-    const [rating, setRating] = useState(0);
+    const [rating, setRating] = useState(5);
     const [reviewText, setReviewText] = useState('');
 
     const handleSubmit = async e => {

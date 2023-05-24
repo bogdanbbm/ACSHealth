@@ -13,6 +13,7 @@ async function getMedics() {
     }
   })
     .then(response => response.data)
+      // .then(data => console.log(data))
     .catch(error => console.log(error));
 }
 
