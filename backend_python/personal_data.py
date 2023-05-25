@@ -1,139 +1,160 @@
-from __main__ import app, stderr, request, mysql, validate_json, format_sql, make_response, json
-from medic_data import get_login_id
+from flask import Blueprint, make_response, request
+from models import patient_data, allergy_list, login_details
+from utils import mysql, validate_json
+from db_ops import get_login_id
+from sys import stderr
+from datetime import datetime
+import jwt
 
-@app.route('/patient_data/<username>', methods = ["GET", "POST", "DELETE"])
-def personal_data(username):
-    cur = mysql.connection.cursor()
-    
-    if request.method == "GET":
-        cur.execute("SELECT * FROM PATIENT_DATA WHERE ID = {}".format(get_login_id(username)))
-        response_db = cur.fetchall()
-        if response_db is not None:
-            personal = []
-            for entry in response_db:
-                """
-                ID          int NOT NULL,
-                SUR_NAME    varchar(255),
-                LAST_NAME   varchar(255),
-                CNP         varchar(20),
-                BIRTHDATE   DATE,
-                SEX         varchar(1),
-                HEIGHT      FLOAT,
-                bloodGroup      varchar(2),
-                RH          varchar(2),
-                """
-                alergyList = []
-                cur.execute("SELECT ALERGY FROM ALERGY_LIST WHERE ID = {}".format(get_login_id(username)))
-                response_alergy = cur.fetchall()
-                if response_alergy is not None:
-                    for alergy in response_alergy:
-                        alergyList.append(alergy[0])
+patient_data_blueprint = Blueprint("patient_data", __name__)
 
-                personal.append({"firstName": entry[1], 
-                                 "lastName": entry[2], 
-                                 "cnp": entry[3], 
-                                 "birthday": str(entry[4]),
-                                 "sex": entry[5],
-                                 "height": entry[6],
-                                 "bloodGroup": entry[7],
-                                 "rh": entry[8],
-                                 "alergyList": alergyList,
-                                 })
-            return make_response(json.dumps(personal), 200)
-        cur.close()
-        return make_response({"message": "No data found"}, 400)
+@patient_data_blueprint.route('/patient_data', methods=["GET"])
+def get_personal_data():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
-    elif request.method == "POST":
-        data_received = request.get_json()
-        if not validate_json(["firstName", "lastName", "cnp", "birthday",\
-                              "sex", "height", "weight",
-                              "bloodGroup", "rh", "alergyList"], data_received)\
-        and\
-        not validate_json(["new_weight"], data_received)\
-        and\
-        not validate_json(["new_alergy"]):
-            cur.close()
-            return make_response({"message": "Invalid json"}, 400)
-        if data_received["sex"] not in ["M", "F"]:
-            cur.close()
-            return make_response({"message": "Sex should be M or F"}, 400)
-        # TODO: check date format, bloodGroup, rh, cnp, alergyList
-        if not "new_weight" in data_received:
-            login_id = get_login_id(username)
-            if login_id == -1:
-                cur.close()
-                return make_response({"message": "Bad username"}, 400)
-            try:
-                cur.execute("""INSERT INTO PATIENT_DATA     (ID,
-                                                            FIRST_NAME,
-                                                            LAST_NAME,
-                                                            CNP,
-                                                            BIRTHDATE,
-                                                            SEX,
-                                                            HEIGHT,
-                                                            SGROUP,
-                                                            RH)
-                                    VALUES ({login_id}, {firstName}, {lastName},
-                                            {cnp}, {birthday}, {sex},
-                                            {height}, {bloodGroup}, {rh})"""
-                                .format(
-                                    login_id    = login_id,
-                                    firstName       = format_sql(data_received["firstName"]),
-                                    lastName       = format_sql(data_received["lastName"]),
-                                    cnp         = data_received["cnp"],
-                                    birthday    = format_sql(data_received["birthday"]),
-                                    sex         = format_sql(data_received["sex"]),
-                                    height      = data_received["height"],
-                                    bloodGroup      = format_sql(data_received["bloodGroup"]),
-                                    rh          = format_sql(data_received["rh"])
-                                ))
-            except Exception as e:
-                print(e, file=stderr)
-                cur.close()
-                return make_response({"message": "Database insertion error"}, 500)
-            mysql.connection.commit()
-        # we have to insert the weight anyway
+    # get id from username and check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    # create object with mandatory data and potentially optional data that has been completed
+    data = patient_data.query.filter_by(id=login_id).first()
+    if data is not None:
+        data_obj = {}
+        data_obj["firstName"] = data.first_name
+        data_obj["lastName"] = data.last_name
+        data_obj["CNP"] = data.cnp
+        data_obj["gender"] = data.gender
+        data_obj["birthdate"] = str(data.birthdate)
+        if data.height is not None:
+            data_obj["height"] = data.height
+        if data.weight is not None:
+            data_obj["weight"] = data.weight
+        if data.sgroup is not None:
+            data_obj["sanguineGroup"] = data.sgroup
+        if data.rh is not None:
+            data_obj["RH"] = data.rh
+
+        # add allergy list to the object
+        allergy_res = allergy_list.query.filter_by(patient_id=login_id).all()
+        allergies = []
+        for allergy in allergy_res:
+            allergies.append({"allergy":allergy.allergy})
+        data_obj["allergies"] = allergies
+
+        return make_response(data_obj, 200)
+    return make_response({}, 204)
+
+
+@patient_data_blueprint.route("/patient_data", methods=["POST"])
+def insert_personal_data():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
+    data_received = request.get_json()
+    personal_data = None
+
+    # get id from username and check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    # validate json
+    if validate_json(["firstName", "lastName", "CNP", "gender", "birthdate"], data_received):
+        # create object with mandatory data
         try:
-            cur.execute("""INSERT INTO WEIGHT_HISTORY   (ID,
-                                                        WEIGHT_VALUE)
-                                VALUES ({login_id}, {weight_value})"""
-                            .format(
-                                login_id        = login_id,
-                                weight_value    = data_received["weight"] if "weight" in data_received\
-                                else data_received["new_weight"]
-                            ))
-        except Exception as e:
-            cur.close()
-            print(e, file=stderr)
-            return make_response({"message": "Database insertion error"}, 500)
-        mysql.connection.commit()
-        try:
-            if "alergyList" in data_received:
-                for alergy in data_received["alergyList"]:
-                    cur.execute("""INSERT INTO ALERGY_LIST     (ID,
-                                                        ALERGY)
-                                VALUES ({login_id}, {alergy})"""
-                            .format(
-                                login_id        = login_id,
-                                alergy          = format_sql(alergy)
-                            ))
-                    mysql.connection.commit()
-            elif "new_alergy" in data_received:
-                cur.execute("""INSERT INTO ALLERGY_LIST     (ID,
-                                                        ALERGY)
-                                VALUES ({login_id}, {alergy})"""
-                            .format(
-                                login_id        = login_id,
-                                alergy          = data_received["new_alergy"]
-                            ))
-                mysql.connection.commit()
+            date = datetime.strptime(data_received["birthdate"], "%d/%m/%Y")
+            personal_data = patient_data(login_id,
+                                        data_received["firstName"],
+                                        data_received["lastName"],
+                                        data_received["CNP"],
+                                        date.strftime('%Y-%m-%d %H:%M:%S'),
+                                        data_received["gender"])
+            mysql.session.add(personal_data)
+
+            pat = login_details.query.filter_by(id=login_id).first()
+            pat.completed_reg = 'Y'
+            
+            mysql.session.commit()
         except Exception as e:
             print(e, file=stderr)
-            cur.close()
-            return make_response({"message": "Database insertion error"}, 500)
-        cur.close()
-        return make_response({"message": "Success"}, 201)
+            return make_response({"message":"Database insertion error"}, 500)
+    else:
+        return make_response({"message":"Invalid JSON"}, 400)
+    
+    # check if object has been inserted by query-ing database
+    pers = patient_data.query.filter_by(id=login_id).first()
 
-    elif request.method == "DELETE":
-        pass
-    return ""
+    # check if any optional data has been completed
+    try:
+        if validate_json(["weight"], data_received):
+            pers.weight = float(data_received["weight"])
+        if validate_json(["height"], data_received):
+            pers.height = float(data_received["height"])
+        if validate_json(["sanguineGroup"], data_received):
+            pers.sgroup = data_received["sanguineGroup"]
+        if validate_json(["RH"], data_received):
+            pers.rh = data_received["RH"]
+        mysql.session.commit()
+    except Exception as e:
+        print(e, file=stderr)
+        return make_response({"message":"Database insertion error"}, 500)
+    
+    return make_response({"message":"Successfully added patient data"}, 201)
+
+
+@patient_data_blueprint.route("/patient_data", methods=["PATCH"])
+def update_personal_data():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    data_received = request.get_json()
+
+    # get id from username and check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    # query database for the patient
+    pers = patient_data.query.filter_by(id=login_id).first()
+    if pers is None:
+        return make_response({"message":"Not completed mandatory data"}, 400)
+
+    # update values for received optional fields
+    try:
+        if validate_json(["weight"], data_received):
+            pers.weight = float(data_received["weight"])
+        if validate_json(["height"], data_received):
+            pers.height = float(data_received["height"])
+        if validate_json(["sanguineGroup"], data_received):
+            pers.sgroup = data_received["sanguineGroup"]
+        if validate_json(["RH"], data_received):
+            pers.rh = data_received["RH"]
+        mysql.session.commit()
+    except Exception as e:
+        print(e, file=stderr)
+        return make_response({"message":"Database update error"}, 500)
+    
+    return make_response({"message":"Successfully updated patient data"}, 200)
+
+@patient_data_blueprint.route("/patient_data/allergies", methods=["POST"])
+def insert_allergy():
+    data_received = request.get_json()
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
+    # get id from username and check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    # validate json
+    if not validate_json(["allergy"], data_received):
+        return make_response({"message":"Invalid JSON"}, 400)
+
+    # insert allergy into database
+    try:
+        allergy = allergy_list(login_id, data_received["allergy"])
+        mysql.session.add(allergy)
+        mysql.session.commit()
+    except Exception as e:
+        print(e, file=stderr)
+        return make_response({"message":"Database insertion error"}, 500)
+    
+    return make_response({"message":"Successfully added allergy"}, 201)

@@ -95,31 +95,25 @@ class appointments(mysql.Model):
 
 
 class patient_data(mysql.Model):
-    id = mysql.Column(mysql.Integer, primary_key=True)
+    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
+    id = mysql.Column(mysql.Integer, unique=True)
     first_name = mysql.Column(mysql.String(255))
     last_name = mysql.Column(mysql.String(255))
     cnp = mysql.Column(mysql.String(20))
     birthdate = mysql.Column(mysql.DATE)
-    sex = mysql.Column(mysql.String(1))
+    gender = mysql.Column(mysql.String(1))
     height = mysql.Column(mysql.Float)
+    weight = mysql.Column(mysql.Float)
     sgroup = mysql.Column(mysql.String(2))
-    rh = mysql.Column(mysql.String(2))
+    rh = mysql.Column(mysql.String(1))
 
-    def __init__(self, first_name, last_name, cnp, birthdate):
+    def __init__(self, id, first_name, last_name, cnp, birthdate, gender):
+        self.id = id
         self.first_name = first_name
         self.last_name = last_name
         self.cnp = cnp
         self.birthdate = birthdate
-
-
-class weight_history(mysql.Model):
-    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
-    patient_id = mysql.Column(mysql.Integer, nullable=False)
-    weight_value = mysql.Column(mysql.Float, nullable=False)
-
-    def __init__(self, patient_id, weight_value):
-        self.patient_id = patient_id
-        self.weight_value = weight_value
+        self.gender = gender
 
 
 class allergy_list(mysql.Model):
