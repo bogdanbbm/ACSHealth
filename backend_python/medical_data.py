@@ -48,7 +48,7 @@ def get_medical_data():
         med = login_details.query.filter_by(id=cons.id_medic).first()
         # if at any point a medic for one of the consultations hasn't completed
         # the registration process return an error
-        cons_list.append({"medicName": med.username,
+        cons_list.append({"medicUsername": med.username,
                           "consultationDate":str(cons.consult_date), "treatment":cons.treatment})
     
     return make_response(dumps(cons_list), 200)
