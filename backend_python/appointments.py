@@ -55,7 +55,7 @@ def create_appointment():
     try:
         clinic_id = get_clinic_id(data_received["clinicName"])
         medic_id = get_login_id(data_received["medicUsername"])
-        date = datetime.strptime(data_received["appointmentDate"], "%d/%m/%Y")
+        date = datetime.strptime(data_received["appointmentDate"], "%Y-%m-%d")
         appointment = appointments(clinic_id, medic_id, patient_id, date.strftime('%Y-%m-%d %H:%M:%S'))
 
         mysql.session.add(appointment)
@@ -82,7 +82,7 @@ def modify_appointment(appointment_id):
         if appointment is None:
             return make_response({"message":"Invalid appointment id"}, 400)
 
-        new_date = datetime.strptime(data_received["appointmentDate"], "%d/%m/%Y")
+        new_date = datetime.strptime(data_received["appointmentDate"], "%Y-%m-%d")
         appointment.appointment_date = new_date.strftime('%Y-%m-%d %H:%M:%S')
         mysql.session.commit()
     except Exception as e:

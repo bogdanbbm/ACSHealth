@@ -57,7 +57,7 @@ def insert_blood_donation():
         if user is None:
             return make_response({"message":"Patient does not exist"}, 400)
 
-        date = datetime.strptime(data_received["donationDate"], "%d/%m/%Y")
+        date = datetime.strptime(data_received["donationDate"], "%Y-%m-%d")
         donation = blood_donation_history(patient.id, date.strftime('%Y-%m-%d %H:%M:%S'))
         
         mysql.session.add(donation)
