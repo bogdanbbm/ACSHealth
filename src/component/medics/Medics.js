@@ -9,14 +9,14 @@ async function getMedics() {
 
   return axios.get(apiURL + '/medic_list', {
     headers: {
-        'Content-Type': 'application/json'
+      'Content-Type': 'application/json'
     }
   })
     .then(response => response)
     .catch(error => console.log(error));
 }
 
-function Medics({ token }) {
+function Medics({token}) {
   const [medics, setMedics] = useState([]);
 
   useEffect(() => {
@@ -35,10 +35,10 @@ function Medics({ token }) {
 
   return (
     <div className="medics">
-        <h1>Medics</h1>
-        <div className="medics-container">
-            {medics.map(item => <Medic medic={item} token={token} />)}
-        </div>
+      <h1>Medics</h1>
+      <div className="medics-container">
+        {medics.map(item => <Medic medic={item} token={token}/>)}
+      </div>
     </div>
   );
 }

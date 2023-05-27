@@ -49,7 +49,7 @@ function AddReview({token, medicUsername, closeModal}) {
           <label for="ratingSlider">Rating: {rating}&#9733;</label>
         </div>
         <div className="field">
-          <textarea type="text" rows="5" required className="review-text" id="reviewText"
+          <textarea className="review-text" rows="5" required id="reviewText"
                     onChange={e => setReviewText(e.target.value)}/>
           <label for="reviewText">Write your review here:</label>
         </div>
