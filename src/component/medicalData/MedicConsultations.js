@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
 import AddConsultation from './AddConsultation';
+import './MedicalData.css';
 
 async function getMedicConsultations(token) {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -66,7 +67,7 @@ function MedicConsultations({ token }) {
         {consultations.map(consultation => (
           <Consultation consultation={consultation} />))}
       </div>
-      <div className="add-consultation-button">
+      <div className="add-consultation">
         <button onClick={handleOpen}>Add consultation</button>
         <Modal className="add-consultation-modal" open={open} onClose={handleClose}>
           <div className="add-consultation-modal-container">
@@ -76,6 +77,10 @@ function MedicConsultations({ token }) {
       </div>
     </>
   );
+}
+
+MedicConsultations.propTypes = {
+  token: PropTypes.string.isRequired
 }
 
 export default MedicConsultations;

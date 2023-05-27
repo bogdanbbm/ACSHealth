@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import './MedicalData.css';
 
 async function getPatientConsultations(token) {
   const apiURL = process.env.REACT_APP_API_URL;
