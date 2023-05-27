@@ -1,13 +1,38 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import MedicReview from './MedicReview';
 import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
 import './Medics.css';
 import AddReview from './AddReview';
+import axios from "axios";
+
+function getReviews(medicId) {
+  const apiURL = process.env.REACT_APP_API_URL;
+
+  return axios.get(apiURL + '/reviews/' + medicId, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+    .then(response => response)
+    .catch(error => console.log(error));
+}
 
 function Medic({ medic, token }) {
   const [open, setOpen] = useState(false);
   const [openAddReview, setOpenAddReview] = useState(false);
+  const [reviews, setReviews] = useState([]);
+
+  useEffect(() => {
+    getReviews(medic.id)
+      .then(response => {
+        if (response.status === 200) {
+          setReviews(response.data);
+        } else {
+          console.log(response);
+        }
+      });
+  }, [medic.id]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -25,8 +50,6 @@ function Medic({ medic, token }) {
     setOpenAddReview(false);
   }
 
-
-
   return (
     <div className="medic-container" >
       <div className="medic-header">
@@ -38,7 +61,7 @@ function Medic({ medic, token }) {
           <h3>Primary Medic</h3>
           <p>
             Rating: {medic.rating.toFixed(2)}<br/>
-            Number of reviews: {medic.reviews.length}
+            Number of reviews: {reviews.length}
           </p>
         </div>
         <div className="medic-reviews">
@@ -54,11 +77,11 @@ function Medic({ medic, token }) {
                   <h3>Primary Medic</h3>
                   <p>
                     Rating: {medic.rating.toFixed(2)}<br/>
-                    Number of reviews: {medic.reviews.length}
+                    Number of reviews: {reviews.length}
                   </p>
                 </div>
                 <div className="medic-reviews">
-                  {medic.reviews.map(item => <MedicReview review={item} />)}
+                  {reviews.map(item => <MedicReview review={item} />)}
                 </div>
                 <div className="add-review-button">
                   {token && <button onClick={handleOpenAddReview}>Add review</button>}
@@ -83,7 +106,6 @@ Medic.propTypes = {
     lastName: PropTypes.string.isRequired,
     rating: PropTypes.number.isRequired,
     username: PropTypes.string.isRequired,
-    reviews: PropTypes.arrayOf(PropTypes.object).isRequired
   }).isRequired,
   token: PropTypes.string.isRequired
 }

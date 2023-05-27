@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import Medic from './Medic';
 import './Medics.css';
-import PropTypes from "prop-types";
+import PropTypes from 'prop-types';
 
 async function getMedics() {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -12,66 +12,26 @@ async function getMedics() {
         'Content-Type': 'application/json'
     }
   })
-    .then(response => response.data)
-      // .then(data => console.log(data))
-    .catch(error => console.log(error));
-}
-
-function getReviews(medicId) {
-  const apiURL = process.env.REACT_APP_API_URL;
-
-  return axios.get(apiURL + '/reviews/' + medicId, {
-    headers: {
-        'Content-Type': 'application/json'
-    }
-  })
-    .then(response => response.data)
+    .then(response => response)
     .catch(error => console.log(error));
 }
 
 function Medics({ token }) {
-  let medics = [{
-    firstName: 'John',
-    lastName: 'Doe',
-    rating: 3.0,
-    username: 'johndoe',
-    reviews: [
-      {
-        rating: 4.5,
-        review: 'Very good medic'
-      },
-      {
-        rating: 1.5,
-        review: 'Very bad medic'
-      }
-    ]
-  },
-    {
-      firstName: 'Jane',
-      lastName: 'Doe',
-      rating: 4.0,
-      username: 'janedoe',
-      reviews: [
-        {
-          rating: 4.5,
-          review: 'Very good medic'
-        },
-        {
-          rating: 1.5,
-          review: 'Very bad medic'
+  const [medics, setMedics] = useState([]);
+
+  useEffect(() => {
+    getMedics()
+      .then(response => {
+        if (response.status === 200) {
+          setMedics(response.data);
+        } else {
+          console.log(response);
         }
-      ]
-    }
-  ];
-  // console.log(getMedics());
+      });
 
-  if (!medics) {
-    for (let i = 0; i < medics.length; i++) {
-      medics[i].reviews = getReviews(medics[i].username);
-    }
-  }
+    medics.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
 
-  medics.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
+  }, [medics]);
 
   return (
     <div className="medics">
