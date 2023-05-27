@@ -2,11 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 function MedicReview({ review }) {
-  console.log(review);
+
   return (
     <div className="review-container">
       <div className="review-body">
-        <h4>Rating: {review.rating}</h4>
+        <h4>Rating: {review.rating}&#9733;</h4>
         <p style={{textAlign: "left"}}>{review.review}</p>
       </div>
     </div>
