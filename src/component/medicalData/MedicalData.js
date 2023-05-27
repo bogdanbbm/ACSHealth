@@ -4,6 +4,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import PatientConsultations from './PatientConsultations';
 import MedicConsultations from './MedicConsultations';
+import './MedicalData.css';
 
 async function checkIfCompleted(token) {
   const apiURL = process.env.REACT_APP_API_URL;
@@ -166,28 +167,29 @@ function MedicalData({token}) {
             <label for="birthdate">Birthday:</label>
             {editMode ? <input type="date" name="birthDate" id="birthdate" onChange={onInputChange}/> :
               <span>{personalData?.birthDate}</span>}
-            {personalData.birthDate}
           </div>
           <div className="field">
             <label for="sex">Sex:</label>
             {editMode ? <select name="sex" id="sex" onChange={onInputChange}>
+              <option hidden selected>Choose sex</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select> : <span>{personalData?.sex}</span>}
           </div>
           <div className="field">
-            <label for="height">Height:</label>
-            {editMode ? <input type="number" name="height" id="height" onChange={onInputChange}/> :
+            <label for="height">Height (cm):</label>
+            {editMode ? <input type="number" min="0" name="height" id="height" onChange={onInputChange}/> :
               <span>{personalData?.height}</span>}
           </div>
           <div className="field">
-            <label for="weight">Weight:</label>
-            {editMode ? <input type="number" name="weight" id="weight" onChange={onInputChange}/> :
+            <label for="weight">Weight (kg):</label>
+            {editMode ? <input type="number" min="0" name="weight" id="weight" onChange={onInputChange}/> :
               <span>{personalData?.weight}</span>}
           </div>
           <div className="field">
             <label for="bloodgroup">Blood Group:</label>
             {editMode ? <select name="bloodGroup" id="bloodgroup" onChange={onInputChange}>
+              <option hidden selected>Choose blood group</option>
               <option value="01">01</option>
               <option value="A2">A2</option>
               <option value="B3">B3</option>
@@ -197,6 +199,7 @@ function MedicalData({token}) {
           <div className="field">
             <label for="rh">Rh:</label>
             {editMode ? <select name="rh" id="rh" onChange={onInputChange}>
+              <option hidden selected>Choose Rh</option>
               <option value="+">+</option>
               <option value="-">-</option>
             </select> : <span>{personalData?.rh}</span>}

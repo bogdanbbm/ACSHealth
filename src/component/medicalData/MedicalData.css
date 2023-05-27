@@ -1,0 +1,292 @@
+.data {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: popins, sans-serif;
+    box-sizing: border-box;
+    height: 100%;
+    width: 100%;
+    place-items: center;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.data .personal-data-container {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    height: auto;
+    grid-gap: 1rem;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+
+}
+
+@media screen and (max-width: 768px) {
+    .data .personal-data-container {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+        padding: 0 20px;
+    }
+}
+
+.data .personal-data-container form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(190px, 1fr));
+    grid-gap: 1rem;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 30px;
+}
+
+@media screen and (max-width: 768px) {
+    .data .personal-data-container form {
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+        padding: 10px 20px;
+    }
+}
+
+.data .personal-data-container form .field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.data .personal-data-container form .field label {
+    font-size: 16px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    padding-left: 10px;
+}
+
+.data .personal-data-container form .field input {
+    height: 100%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.data .personal-data-container form .field input:focus,
+.data .personal-data-container form .field input:hover {
+    border-color: #4158d0;
+}
+
+.data .personal-data-container form .field input[type="text"],
+.data .personal-data-container form .field input[type="date"],
+.data .personal-data-container form .field input[type="number"] {
+    height: 40px;
+}
+
+.data .personal-data-container form .field select {
+    height: 40px;
+    width: 100%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.data .personal-data-container form .field select:focus,
+.data .personal-data-container form .field select:hover {
+    border-color: #4158d0;
+}
+
+.data .personal-data-container form .field select option:hover {
+    background-color: #c850c0;
+}
+
+.data .personal-data-container form .field span {
+    font-size: 14px;
+    color: #4158d0;
+    margin-top: 5px;
+    border-bottom: #c850c0 1px solid;
+}
+
+.data .personal-data-container form .save-edit-button button {
+    height: 40px;
+    width: 50%;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.data .personal-data-container form .save-edit-button button:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.err {
+    height: 50%;
+    position: relative;
+    left: 20px;
+    margin: 2px 0 0 0;
+    font-size: 13px;
+    color: #e64646;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.consultations {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    grid-gap: 1rem;
+}
+
+@media screen and (max-width: 768px) {
+    .consultations {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+    }
+}
+
+.consultations h1 {
+    justify-self: center;
+}
+
+.add-consultation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-consultation button {
+    height: 40px;
+    width: 50%;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-consultation button:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.add-consultation-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-consultation-modal-container {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-consultation-container form {
+    padding: 25px 30px 50px 30px;
+}
+
+.add-consultation-container form .field {
+    height: 50px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.add-consultation-container form .field label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-240%);
+    font-size: 17px;
+    font-weight: 400;
+    pointer-events: none;
+    color: black;
+    transition: all 0.3s ease;
+}
+
+.add-consultation-container form .field input {
+    height: 100%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-consultation-container form .field textarea {
+    height: 200%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-consultation-container form .field input:focus,
+.add-consultation-container form .field textarea:focus {
+    border-color: #4158d0;
+}
+
+.add-consultation-container form .field button[type="submit"] {
+    height: 50px;
+    margin-left: 75px;
+    width: 50%;
+    margin-top: 50px;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-consultation-container form .field button[type="submit"]:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
