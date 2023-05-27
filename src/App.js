@@ -47,7 +47,7 @@ class AppComponent extends Component {
 
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
-          <Route exact path="/medicalData" element={<MedicalData />}></Route>
+          <Route exact path="/medicalData" element={<MedicalData token={this.props.token} />}></Route>
           <Route exact path="/appointments" element={<Appointments />}></Route>
           <Route exact path="/medics" element={<Medics token={this.props.token}/>}></Route>
           <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
