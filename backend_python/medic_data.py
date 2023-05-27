@@ -51,7 +51,7 @@ def post_medic_details():
         try:
             # TODO: get clinic id from front-end
             medic_info = medic_details(medic_id, data_received["firstName"],
-                                       data_received["lastName"], mysql.sql.null(), timestamp, 0)
+                                       data_received["lastName"], mysql.sql.null(), timestamp)
             mysql.session.add(medic_info)
             med = login_details.query.filter_by(id=medic_id).first()
             med.completed_reg = 'Y'
