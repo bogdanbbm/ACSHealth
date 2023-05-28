@@ -6,21 +6,25 @@ from sys import stderr
 from datetime import datetime
 from models import login_details, medic_details, consultations
 from json import dumps
+import jwt
 
 medical_data_blueprint = Blueprint("medical_data", __name__)
 
 
-@medical_data_blueprint.route("/medical_data/<patient_username>", methods = ["GET"])
-def get_medical_data(patient_username):
+@medical_data_blueprint.route("/medical_data", methods = ["GET"])
+def get_medical_data():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
     # get id for provided username to check if it exists
-    login_id = get_login_id(patient_username)
+    login_id = get_login_id(token.get('username'))
     if login_id == -1:
         return make_response({"message": "Bad username"}, 400)
 
     # query database for all consultations for the patient
     cons_res = consultations.query.filter_by(id_patient=login_id).all()
     if cons_res == []:
-        return make_response({"message": "No consultations found"}, 204)
+        return make_response({}, 204)
+
     cons_list = []
     for cons in cons_res:
         # compute list of consultations and return it
@@ -33,14 +37,16 @@ def get_medical_data(patient_username):
         
         medd = medic_details.query.filter_by(id=cons.id_medic).first()
         med_name = medd.fname + " " + medd.lname
-        cons_list.append({"medic": med_name,
-                          "date":str(cons.consult_date), "treatment":cons.treatment})
+        cons_list.append({"medicName": med_name,
+                          "consultationDate":str(cons.consult_date), "treatment":cons.treatment})
     
     return make_response(dumps(cons_list), 200)
 
 
-@medical_data_blueprint.route("/medical_data/<medic_username>", methods = ["POST"])
-def post_medical_data(medic_username):
+@medical_data_blueprint.route("/medical_data", methods = ["POST"])
+def post_medical_data():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    
     # validate json
     data_received = request.get_json()
     if not validate_json(["patientUsername", "treatment", "consultationDate"],
@@ -48,7 +54,7 @@ def post_medical_data(medic_username):
         return make_response({"message": "Invalid json"}, 400)
 
     # get id for provided username to check if it exists
-    login_id = get_login_id(medic_username)
+    login_id = get_login_id(token.get('username'))
     if login_id == -1:
         return make_response({"message": "Bad username"}, 400)
     
@@ -58,7 +64,7 @@ def post_medical_data(medic_username):
         return make_response({"message": "Bad request"}, 400)
     
     # check if user is medic and deny permission if not
-    user = login_details.query.filter_by(username=medic_username).first()
+    user = login_details.query.filter_by(username=token.get('username')).first()
     if user is not None and user.is_medic == 'N':
         return make_response({"message": "Permission denied"}, 403)
     

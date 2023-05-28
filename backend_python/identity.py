@@ -1,10 +1,10 @@
 from flask import Blueprint, make_response, request
 from utils import mysql, validate_json
+from db_ops import get_login_id
 from sys import stderr
 from uuid import uuid4
 from email_module import compute_email
 import jwt
-from datetime import datetime, timedelta
 from models import login_details
 
 identity_blueprint = Blueprint('identity', __name__)
@@ -106,8 +106,20 @@ def login():
 
     # generate and return jwt for user
     print("Login successful!", file=stderr)
-    token = jwt.encode({
-        'isMedic': 0 if user.is_medic == 'N' else 1,
-        'exp' : datetime.utcnow() + timedelta(minutes = 30)
-    }, "secret")
+    token = jwt.encode(payload={"username":user.username}, key="secret")
     return make_response({'token' : token}, 201)
+
+
+@identity_blueprint.route("/has_completed", methods=["GET"])
+def has_completed():
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
+    # get id for provided username to check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    # query database for user and return whether they have completed personal data or not
+    user = login_details.query.filter_by(id=login_id).first()
+    completed = 1 if user.completed_reg == 'Y' else 0
+    return make_response({"completed":completed}, 200)

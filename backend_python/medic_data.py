@@ -6,6 +6,7 @@ from models import medic_details, reviews, login_details
 from db_ops import get_login_id, get_username
 from json import dumps
 import time
+import jwt
 from sqlalchemy.sql import func
 
 medic_blueprint = Blueprint("medics", __name__)
@@ -15,7 +16,7 @@ medic_blueprint = Blueprint("medics", __name__)
 def get_medic_details():
     # query database for all medics
     medics = medic_details.query.all()
-    if medics is not None:
+    if medics != []:
         list_of_medics = []
 
         # compute list of medics
@@ -26,18 +27,20 @@ def get_medic_details():
                                 "imageStamp": str(entry.image_stamp).replace(" ", "+")})
         return make_response(dumps(list_of_medics), 200)
 
-    return make_response({"message": "No medics found"}, 204)
+    return make_response({}, 204)
 
 
 @medic_blueprint.route("/medic_list", methods = ["POST"])
 def post_medic_details():
+        token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
         # validate json
         data_received = request.get_json()
-        if not validate_json(["username", "firstName", "lastName"], data_received):
+        if not validate_json(["firstName", "lastName"], data_received):
             return make_response({"message": "Invalid json"}, 400)
 
         # get id for provided username to check if it exists
-        medic_id = get_login_id(data_received["username"])
+        medic_id = get_login_id(token.get('username'))
         if medic_id == -1:
             return make_response({"message": "Bad username"}, 400)
 
@@ -46,8 +49,9 @@ def post_medic_details():
                                                     .strftime('%Y-%m-%d %H:%M:%S')
         # insert medic info into database
         try:
+            # TODO: get clinic id from front-end
             medic_info = medic_details(medic_id, data_received["firstName"],
-                                       data_received["lastName"], mysql.sql.null(), timestamp)
+                                       data_received["lastName"], mysql.sql.null(), timestamp, 0)
             mysql.session.add(medic_info)
             med = login_details.query.filter_by(id=medic_id).first()
             med.completed_reg = 'Y'
@@ -68,18 +72,16 @@ def get_medic_reviews(medic_username):
 
     # query database for all of the medic's reviews
     all_revs = reviews.query.filter_by(id_medic=medic_id).all()
-    
+
     # check if there are any reviews
     if all_revs == []:
-        return make_response({"message": "No reviews found for username " + medic_username}, 204)
-    
+        return make_response({}, 204)
+
     list_of_reviews = []
     # compute the list of reviews and return it
     for entry in all_revs:
         list_of_reviews.append({"review": entry.review, "rating": entry.rating, "idReview": entry.id_review})
     return make_response(dumps(list_of_reviews), 200)
-
-    
 
 
 @medic_blueprint.route("/medic_reviews/<medic_username>", methods = ["POST"])
@@ -119,17 +121,12 @@ def post_medic_reviews(medic_username):
     return make_response({"message": "Review added successfully"}, 201)
 
 
-@medic_blueprint.route("/medic_reviews", methods = ["DELETE"])
-def delete_medic_reviews():
-    # validate json
-    data_received = request.get_json()
-    if not validate_json(["idReview"], data_received):
-        return make_response({"message": "Invalid json"}, 400)
-
+@medic_blueprint.route("/medic_reviews/<id_review>", methods = ["DELETE"])
+def delete_medic_reviews(id_review):
     # query the database for wanted review
     rev = None
     try:
-        rev = reviews.query.filter_by(id_review=data_received["idReview"]).first()
+        rev = reviews.query.filter_by(id_review=id_review).first()
     except Exception as e:
         print(e, file=stderr)
         return make_response({"message": "Db selection error"}, 400)
