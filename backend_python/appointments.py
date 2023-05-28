@@ -1,7 +1,7 @@
 from flask import Blueprint, make_response, request
 from utils import mysql, validate_json
 from db_ops import get_login_id, get_username, get_clinic_name, get_clinic_id
-from models import appointments
+from models import appointments, login_details
 from json import dumps
 from datetime import datetime
 import jwt
@@ -18,8 +18,28 @@ def get_appointments():
     login_id = get_login_id(token.get('username'))
     if login_id == -1:
         return make_response({"message":"Bad username"}, 400)
+    
+    # check if user is medic and return the appropriate appointments
+    user = login_details.query.filter_by(id=login_id).first()
+    if user.is_medic == 'Y':
+        # query database for all appoinments for the medic
+        appointments_r = appointments.query.filter_by(id_medic=login_id).all()
+        if appointments_r == []:
+            return make_response({}, 204)
+        
+        # if there are appointments, create a list with their data and return it
+        appointment_l = []
+        for appointment in appointments_r:
+            patient_username = get_username(appointment.id_patient)
+            clinic_name = get_clinic_name(appointment.id_clinic)
 
-    # query database for all appoinments for the user
+            appointment_l.append({"idAppointment": appointment.id_appointment,
+                                  "patientUsername": patient_username,
+                                  "clinicName": clinic_name,
+                                  "appointmentDate": str(appointment.appointment_date)})
+        return make_response(dumps(appointment_l), 200)
+
+    # query database for all appoinments for the patient
     appointments_res = appointments.query.filter_by(id_patient=login_id).all()
     if appointments_res == []:
         return make_response({}, 204)

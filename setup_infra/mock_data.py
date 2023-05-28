@@ -114,6 +114,23 @@ resp = requests.post("{base}/images/{stamp}".format(base = base_url, stamp = sta
 
 stamps.close()
 
+# add medic reviews
+
+requests.post("{}/medic_reviews/med1".format(base_url), json={"review":"foarte dezamagit",
+                "rating":float(1)})
+requests.post("{}/medic_reviews/med1".format(base_url), json={"review":"Nu are ce cauta acolo",
+                "rating":float(2)})
+requests.post("{}/medic_reviews/med1".format(base_url), json={"review":"Nesimtit",
+                "rating":float(2)})
+requests.post("{}/medic_reviews/med2".format(base_url), json={"review":"Ok",
+                "rating":float(4)})
+requests.post("{}/medic_reviews/med2".format(base_url), json={"review":"Parea putin plictisita",
+                "rating":float(3)})
+requests.post("{}/medic_reviews/med3".format(base_url), json={"review":"De treaba",
+                "rating":float(4)})
+requests.post("{}/medic_reviews/med4".format(base_url), json={"review":"Super intelegator",
+                "rating":float(5)})
+
 # add patient data
 
 requests.post("{}/patient_data".format(base_url), json={"firstName": "Mircea",
@@ -138,10 +155,87 @@ requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"dus
 requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"cats"},
               headers={'Authorization':tokens["pat1"]})
 
-# TODO: add consultations
+# add clinics
 
-# TODO: add clinics
+requests.post("{}/clinics".format(base_url), json={"clinicName":"Medlife"})
+requests.post("{}/clinics".format(base_url), json={"clinicName":"Sante"})
+requests.post("{}/clinics".format(base_url), json={"clinicName":"Sanador"})
 
-# TODO: add appointments
+# add consultations
 
-# TODO: add blood donations
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat1",
+            "treatment":"Azitromicina", "consultationDate":"2019-09-18"},
+            headers={'Authorization':tokens["med2"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat2",
+            "treatment":"Bromhexin", "consultationDate":"2017-05-21"},
+            headers={'Authorization':tokens["med1"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat2",
+            "treatment":"Paracetamol", "consultationDate":"2020-11-09"},
+            headers={'Authorization':tokens["med1"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat1",
+            "treatment":"Aspirina", "consultationDate":"2016-10-27"},
+            headers={'Authorization':tokens["med3"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat1",
+            "treatment":"Ceai de ghimbir", "consultationDate":"2019-02-02"},
+            headers={'Authorization':tokens["med4"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat3",
+            "treatment":"Un mar pe zi timp de o luna", "consultationDate":"2018-08-19"},
+            headers={'Authorization':tokens["med3"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat3",
+            "treatment":"Paracetamol", "consultationDate":"2020-07-13"},
+            headers={'Authorization':tokens["med4"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat3",
+            "treatment":"O saptamana la munte", "consultationDate":"2020-09-18"},
+            headers={'Authorization':tokens["med2"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat2",
+            "treatment":"Frectie cu carmol", "consultationDate":"2020-09-18"},
+            headers={'Authorization':tokens["med2"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat3",
+            "treatment":"Tussin Forte", "consultationDate":"2022-04-06"},
+            headers={'Authorization':tokens["med1"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat1",
+            "treatment":"GrinTuss", "consultationDate":"2017-07-17"},
+            headers={'Authorization':tokens["med3"]})
+requests.post("{}/medical_data".format(base_url), json={"patientUsername":"pat1",
+            "treatment":"Colebil", "consultationDate":"2019-01-04"},
+            headers={'Authorization':tokens["med4"]})
+
+# add appointments
+
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Sante",
+            "medicUsername":"med2", "appointmentDate":"2023-06-17"},
+            headers={'Authorization':tokens["pat1"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Sanador",
+            "medicUsername":"med1", "appointmentDate":"2023-07-06"},
+            headers={'Authorization':tokens["pat1"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Sante",
+            "medicUsername":"med3", "appointmentDate":"2023-06-21"},
+            headers={'Authorization':tokens["pat2"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Medlife",
+            "medicUsername":"med3", "appointmentDate":"2023-07-16"},
+            headers={'Authorization':tokens["pat3"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Medlife",
+            "medicUsername":"med4", "appointmentDate":"2023-08-09"},
+            headers={'Authorization':tokens["pat2"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Sante",
+            "medicUsername":"med1", "appointmentDate":"2023-06-22"},
+            headers={'Authorization':tokens["pat1"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Sanador",
+            "medicUsername":"med4", "appointmentDate":"2023-07-29"},
+            headers={'Authorization':tokens["pat2"]})
+requests.post("{}/appointments".format(base_url), json={"clinicName":"Medlife",
+            "medicUsername":"med3", "appointmentDate":"2023-08-12"},
+            headers={'Authorization':tokens["pat3"]})
+
+# add blood donations
+
+requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat1",
+            "donationDate":"2020-02-07"}, headers={'Authorization':tokens["med4"]})
+requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat1",
+            "donationDate":"2019-05-19"}, headers={'Authorization':tokens["med3"]})
+requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat2",
+            "donationDate":"2021-10-22"}, headers={'Authorization':tokens["med1"]})
+requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat1",
+            "donationDate":"2018-09-26"}, headers={'Authorization':tokens["med4"]})
+requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat3",
+            "donationDate":"2017-07-16"}, headers={'Authorization':tokens["med2"]})

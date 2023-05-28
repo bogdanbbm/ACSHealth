@@ -28,7 +28,7 @@ def get_medical_data():
             return make_response({}, 204)
         
         cons_l = []
-        for cons in cons_res:
+        for cons in cons_ress:
             # compute list of consultations and return it
             pat = login_details.query.filter_by(id=cons.id_patient).first()
             cons_l.append({"patientUsername": pat.username,
