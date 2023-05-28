@@ -34,16 +34,14 @@ class medic_details(mysql.Model):
     fname = mysql.Column(mysql.String(255), default = " ")
     lname = mysql.Column(mysql.String(255), default = " ")
     rating = mysql.Column(mysql.Float)
-    clinic_id = mysql.Column(mysql.Integer)
     image_stamp = mysql.Column(mysql.TIMESTAMP, nullable=False)
 
-    def __init__(self, id, fname, lname, rating, image_stamp, clinic_id):
+    def __init__(self, id, fname, lname, rating, image_stamp):
         self.id = id
         self.fname = fname
         self.lname = lname
         self.rating = rating
         self.image_stamp = image_stamp
-        self.clinic_id = clinic_id
 
 
 class reviews(mysql.Model):

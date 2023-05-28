@@ -1,5 +1,5 @@
 from flask import Blueprint, make_response, request
-from models import blood_donation_history
+from models import blood_donation_history, login_details
 from utils import mysql, validate_json
 from sys import stderr
 from db_ops import get_login_id
@@ -43,13 +43,22 @@ def insert_blood_donation():
         return make_response({"message":"Bad username"}, 400)
 
     # validate json
-    if not validate_json(["donationDate"], data_received):
+    if not validate_json(["patientUsername", "donationDate"], data_received):
         return make_response({"message":"Invalid JSON"}, 400)
+    
+    # check if user is medic and deny permission if not
+    user = login_details.query.filter_by(username=token.get('username')).first()
+    if user is not None and user.is_medic == 'N':
+        return make_response({"message": "Permission denied"}, 403)
 
     # insert blood donation into database
     try:
-        date = datetime.strptime(data_received["donationDate"], "%d/%m/%Y")
-        donation = blood_donation_history(login_id, date.strftime('%Y-%m-%d %H:%M:%S'))
+        patient = login_details.query.filter_by(username=data_received["patientUsername"]).first()
+        if user is None:
+            return make_response({"message":"Patient does not exist"}, 400)
+
+        date = datetime.strptime(data_received["donationDate"], "%Y-%m-%d")
+        donation = blood_donation_history(patient.id, date.strftime('%Y-%m-%d %H:%M:%S'))
         
         mysql.session.add(donation)
         mysql.session.commit()
