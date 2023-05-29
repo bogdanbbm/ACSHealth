@@ -28,9 +28,10 @@ function Medics({token}) {
           console.log(response);
         }
       });
+  }, []);
 
+  useEffect(() => {
     medics.sort((a, b) => (a.rating > b.rating) ? 1 : -1);
-
   }, [medics]);
 
   return (

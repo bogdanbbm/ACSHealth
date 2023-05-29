@@ -16,7 +16,7 @@ async function submitReview(review, token, medicUsername) {
     .catch(error => error.response);
 }
 
-function AddReview({token, medicUsername, closeModal}) {
+function AddReview({token, medicUsername, closeModal, setReviews}) {
   const [rating, setRating] = useState(5);
   const [reviewText, setReviewText] = useState('');
 
@@ -35,6 +35,7 @@ function AddReview({token, medicUsername, closeModal}) {
 
     if (response.status === 201) {
       closeModal();
+      setReviews(prevState => [...prevState, {rating, review: reviewText}]);
     } else {
       console.log(response);
     }
@@ -64,7 +65,8 @@ function AddReview({token, medicUsername, closeModal}) {
 AddReview.propTypes = {
   token: PropTypes.string.isRequired,
   medicUsername: PropTypes.string.isRequired,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  setReviews: PropTypes.func.isRequired
 }
 
 export default AddReview;
