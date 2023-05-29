@@ -9,7 +9,7 @@ import axios from "axios";
 function getReviews(medicId) {
   const apiURL = process.env.REACT_APP_API_URL;
 
-  return axios.get(apiURL + '/reviews/' + medicId, {
+  return axios.get(apiURL + '/medic_reviews/' + medicId, {
     headers: {
       'Content-Type': 'application/json'
     }
@@ -23,8 +23,10 @@ function Medic({ medic, token }) {
   const [openAddReview, setOpenAddReview] = useState(false);
   const [reviews, setReviews] = useState([]);
 
+  const apiURL = process.env.REACT_APP_API_URL;
+
   useEffect(() => {
-    getReviews(medic.id)
+    getReviews(medic.username)
       .then(response => {
         if (response.status === 200) {
           setReviews(response.data);
@@ -32,7 +34,7 @@ function Medic({ medic, token }) {
           console.log(response);
         }
       });
-  }, [medic.id]);
+  }, [medic.username]);
 
   const handleOpen = () => {
     setOpen(true);
@@ -54,13 +56,13 @@ function Medic({ medic, token }) {
     <div className="medic-container" >
       <div className="medic-header">
         <h1>{medic.firstName} {medic.lastName}</h1>
-        <img src="https://via.placeholder.com/150" alt="Medic" />
+        <img src={`${apiURL}/images/${medic.imageStamp}`} alt="Medic" />
       </div>
       <div className="medic-body">
         <div className="medic-details">
           <h3>Primary Medic</h3>
           <p>
-            Rating: {medic.rating.toFixed(2)}<br/>
+            Rating: {medic.rating}<br/>
             Number of reviews: {reviews.length}
           </p>
         </div>
@@ -70,13 +72,13 @@ function Medic({ medic, token }) {
             <div className="modal-container">
               <div className="medic-header">
                 <h1>{medic.firstName} {medic.lastName}</h1>
-                <img src="https://via.placeholder.com/150" alt="Medic" />
+                <img src={`${apiURL}/images/${medic.imageStamp}`} alt="Medic" />
               </div>
               <div className="medic-body">
                 <div className="medic-details">
                   <h3>Primary Medic</h3>
                   <p>
-                    Rating: {medic.rating.toFixed(2)}<br/>
+                    Rating: {medic.rating}<br/>
                     Number of reviews: {reviews.length}
                   </p>
                 </div>
@@ -87,7 +89,7 @@ function Medic({ medic, token }) {
                   {token && <button onClick={handleOpenAddReview}>Add review</button>}
                   <Modal className="add-review-modal" onClose={handleCloseAddReview} open={openAddReview}>
                     <div className="add-review-modal-container">
-                      <AddReview token={token} medicUsername={medic.username} closeModal={handleCloseAddReview}/>
+                      <AddReview token={token} medicUsername={medic.username} closeModal={handleCloseAddReview} setReviews={setReviews}/>
                     </div>
                   </Modal>
                 </div>
@@ -106,6 +108,7 @@ Medic.propTypes = {
     lastName: PropTypes.string.isRequired,
     rating: PropTypes.number.isRequired,
     username: PropTypes.string.isRequired,
+    imageStamp: PropTypes.string.isRequired
   }).isRequired,
   token: PropTypes.string.isRequired
 }
