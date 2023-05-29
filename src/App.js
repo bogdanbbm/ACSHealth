@@ -14,7 +14,7 @@ import NotFound from './component/NotFound';
 import Register from './component/login/Register';
 import Login from './component/login/Login';
 import LoginAccButton from './component/login_acc_button/LoginAccButton';
-import Payments from './component/payments/payments';
+import Payments from './component/payments/Payments';
 import useToken from './hooks/useToken';
 import PropTypes from 'prop-types';
 

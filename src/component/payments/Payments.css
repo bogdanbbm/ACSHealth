@@ -1,0 +1,196 @@
+.payments-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: popins, sans-serif;
+    box-sizing: border-box;
+    height: 100vh;
+    width: 100%;
+    place-items: center;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+
+.payments-overview .bg {
+    position: fixed;
+    height: 110vh;
+    width: 100%;
+    background-image: url('../../background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    z-index: -1;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.payments-overview .payments-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 60%;
+}
+
+.payments {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: repeat(auto-fit, 175px);
+    grid-template-rows: repeat(auto-fit, 325px);
+    align-items: center;
+    grid-gap: 5rem;
+    padding: 10px 20px;
+    margin: 40px 0;
+}
+
+@media screen and (max-width: 768px) {
+    .payments {
+        grid-auto-flow: row;
+        grid-template-columns: 1fr;
+        grid-gap: 2rem;
+    }
+}
+
+.payments-h1 {
+    align-self: center;
+}
+
+.add-payment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    width: 50%;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-payment button {
+    height: 50px;
+    width: 60%;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-payment button:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.add-payment-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add-payment-modal-container {
+    width: 380px;
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
+
+.add-payment-container form {
+    padding: 25px 30px 50px 30px;
+}
+
+.add-payment-container form .field {
+    height: 50px;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+.add-payment-container form .field label {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-240%);
+    font-size: 17px;
+    font-weight: 400;
+    pointer-events: none;
+    color: black;
+    transition: all 0.3s ease;
+}
+
+.add-payment-container form .field input {
+    height: 100%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-payment-container form .field textarea {
+    height: 200%;
+    width: 92%;
+    outline: none;
+    font-size: 17px;
+    padding-left: 20px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.add-payment-container form .field input:focus,
+.add-payment-container form .field textarea:focus {
+    border-color: #4158d0;
+}
+
+.add-payment-container form .field button[type="submit"] {
+    height: 50px;
+    margin-left: 75px;
+    width: 50%;
+    margin-top: 50px;
+    outline: none;
+    border: none;
+    border-radius: 25px;
+    font-size: 20px;
+    font-weight: 500;
+    color: #fff;
+    background: linear-gradient(-135deg, #c850c0, #4158d0);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-payment-container form .field button[type="submit"]:hover {
+    transform: scale(1.1);
+    transition: all 0.3s ease;
+}
+
+.payment {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 175px;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
+}
