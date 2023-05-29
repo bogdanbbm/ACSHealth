@@ -23,7 +23,7 @@ function Consultation({ consultation }) {
   return (
     <div className="consultation">
       <h3>{consultation.consultationDate}</h3>
-      <h4>{consultation.patientName}</h4>
+      <h4>{consultation.patientUsername}</h4>
       <p>{consultation.treatment}</p>
     </div>
   );
@@ -32,7 +32,7 @@ function Consultation({ consultation }) {
 Consultation.propTypes = {
   consultation: PropTypes.shape({
     consultationDate: PropTypes.string.isRequired,
-    patientName: PropTypes.string.isRequired,
+    patientUsername: PropTypes.string.isRequired,
     treatment: PropTypes.string.isRequired
   })
 }
@@ -62,7 +62,7 @@ function MedicConsultations({ token }) {
 
   return (
     <>
-      <h1 className="consultations-h1">MConsultations</h1>
+      <h1 className="consultations-h1">Consultations</h1>
       <div className="consultations">
         {consultations.map(consultation => (
           <Consultation consultation={consultation} />))}

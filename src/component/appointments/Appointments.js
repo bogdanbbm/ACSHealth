@@ -29,7 +29,6 @@ function Appointments({token}) {
   }, [navigate, token]);
 
   const [isMedic, setIsMedic] = useState(false);
-  const [error, setError] = useState('');
 
   useEffect(() => {
     checkIfMedic(token)

@@ -35,7 +35,7 @@ async function getPersonalData(token) {
 async function updatePersonalData(token, personalData) {
   const apiURL = process.env.REACT_APP_API_URL;
 
-  return axios.put(apiURL + '/patient_data', personalData, {
+  return axios.patch(apiURL + '/patient_data', personalData, {
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
