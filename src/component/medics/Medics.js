@@ -36,6 +36,7 @@ function Medics({token}) {
 
   return (
     <div className="medics">
+      <div className="bg"/>
       <h1>Medics</h1>
       <div className="medics-container">
         {medics.map(item => <Medic medic={item} token={token}/>)}

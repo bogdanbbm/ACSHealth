@@ -21,9 +21,9 @@ async function getMedicConsultations(token) {
 function Consultation({ consultation }) {
 
   return (
-    <div>
-      <h3>{consultation.date}</h3>
-      <h4>{consultation.patientName}</h4>
+    <div className="consultation">
+      <h3>{consultation.consultationDate}</h3>
+      <h4>{consultation.patientUsername}</h4>
       <p>{consultation.treatment}</p>
     </div>
   );
@@ -31,8 +31,8 @@ function Consultation({ consultation }) {
 
 Consultation.propTypes = {
   consultation: PropTypes.shape({
-    date: PropTypes.string.isRequired,
-    patientName: PropTypes.string.isRequired,
+    consultationDate: PropTypes.string.isRequired,
+    patientUsername: PropTypes.string.isRequired,
     treatment: PropTypes.string.isRequired
   })
 }
@@ -62,8 +62,8 @@ function MedicConsultations({ token }) {
 
   return (
     <>
+      <h1 className="consultations-h1">Consultations</h1>
       <div className="consultations">
-        <h1>MConsultations</h1>
         {consultations.map(consultation => (
           <Consultation consultation={consultation} />))}
       </div>
@@ -71,7 +71,7 @@ function MedicConsultations({ token }) {
         <button onClick={handleOpen}>Add consultation</button>
         <Modal className="add-consultation-modal" open={open} onClose={handleClose}>
           <div className="add-consultation-modal-container">
-            <AddConsultation token={token} closeModal={handleClose}/>
+            <AddConsultation token={token} setConsultations={setConsultations} closeModal={handleClose}/>
           </div>
         </Modal>
       </div>
