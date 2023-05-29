@@ -6,7 +6,7 @@
     padding: 0;
     font-family: popins, sans-serif;
     box-sizing: border-box;
-    height: min(110vh, 100%);
+    height: 100vh;
     width: 100%;
     place-items: center;
     background-image: url('../../background.jpg');
@@ -156,11 +156,23 @@
     100% { transform: translateX(0); }
 }
 
+.data .consultations-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 110%;
+}
+
 .consultations {
     display: grid;
     grid-auto-flow: column;
-    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-    grid-gap: 1rem;
+    grid-template-columns: repeat(auto-fit, 175px);
+    grid-template-rows: repeat(auto-fit, 175px);
+    align-items: center;
+    grid-gap: 5rem;
+    padding: 10px 20px;
+    margin: 40px 0;
 }
 
 @media screen and (max-width: 768px) {
@@ -171,8 +183,8 @@
     }
 }
 
-.consultations h1 {
-    justify-self: center;
+.consultations-h1 {
+    align-self: center;
 }
 
 .add-consultation {
@@ -180,7 +192,7 @@
     justify-content: center;
     align-items: center;
     height: 100%;
-    width: 100%;
+    width: 50%;
     padding: 10px 20px;
     background: white;
     border-radius: 15px;
@@ -290,4 +302,17 @@
 .add-consultation-container form .field button[type="submit"]:hover {
     transform: scale(1.1);
     transition: all 0.3s ease;
+}
+
+.consultation {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 175px;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 15px 20px rgba(0, 0, 0, 0.1);
 }

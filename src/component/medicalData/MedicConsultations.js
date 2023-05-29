@@ -21,8 +21,8 @@ async function getMedicConsultations(token) {
 function Consultation({ consultation }) {
 
   return (
-    <div>
-      <h3>{consultation.date}</h3>
+    <div className="consultation">
+      <h3>{consultation.consultationDate}</h3>
       <h4>{consultation.patientName}</h4>
       <p>{consultation.treatment}</p>
     </div>
@@ -31,7 +31,7 @@ function Consultation({ consultation }) {
 
 Consultation.propTypes = {
   consultation: PropTypes.shape({
-    date: PropTypes.string.isRequired,
+    consultationDate: PropTypes.string.isRequired,
     patientName: PropTypes.string.isRequired,
     treatment: PropTypes.string.isRequired
   })
@@ -62,8 +62,8 @@ function MedicConsultations({ token }) {
 
   return (
     <>
+      <h1 className="consultations-h1">MConsultations</h1>
       <div className="consultations">
-        <h1>MConsultations</h1>
         {consultations.map(consultation => (
           <Consultation consultation={consultation} />))}
       </div>
