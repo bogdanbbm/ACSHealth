@@ -78,3 +78,12 @@ POST /blood_donations o sa primeasca {"patientUsername": string, "donationDate":
     obs: Trebuie sa fii logat ca medic ca sa postezi blood donation
         (verific si pe backend asta just in case, dar nu ar trebui sa apara deloc optiunea pe frontend)
     obs 2: data trimisa de pe frontend trebuie tot in formatul "dd/mm/yyyy"
+
+    -- payments
+
+GET /payments returneaza o lista de plati de {"firstName": string, "lastName": string, "value": float,
+"paymentDate": string, "patientUsername": string, "currency": string}
+POST /payments o sa primeasca {"value": float, "currency": string, "paymentDate": string,
+"patientUsername": string}
+    obs: Trebuie sa fii logat ca medic ca sa poti face o plata
+    obs 2: data trimisa de pe frontend trebuie tot in formatul "dd/mm/yyyy"

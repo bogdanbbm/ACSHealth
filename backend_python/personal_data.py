@@ -10,8 +10,8 @@ patient_data_blueprint = Blueprint("patient_data", __name__)
 
 @patient_data_blueprint.route('/patient_data', methods=["GET"])
 def get_personal_data():
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
     
     # get id from username and check if it exists
     login_id = get_login_id(token.get('username'))
@@ -49,8 +49,8 @@ def get_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["POST"])
 def insert_personal_data():
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
 
     data_received = request.get_json()
     personal_data = None
@@ -106,8 +106,8 @@ def insert_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["PATCH"])
 def update_personal_data():
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
     data_received = request.get_json()
 
     # get id from username and check if it exists
@@ -140,8 +140,8 @@ def update_personal_data():
 @patient_data_blueprint.route("/patient_data/allergies", methods=["POST"])
 def insert_allergy():
     data_received = request.get_json()
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
 
     # get id from username and check if it exists
     login_id = get_login_id(token.get('username'))

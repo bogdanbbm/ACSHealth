@@ -13,8 +13,8 @@ medical_data_blueprint = Blueprint("medical_data", __name__)
 
 @medical_data_blueprint.route("/medical_data", methods = ["GET"])
 def get_medical_data():
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
 
     # get id for provided username to check if it exists
     login_id = get_login_id(token.get('username'))
@@ -57,8 +57,8 @@ def get_medical_data():
 
 @medical_data_blueprint.route("/medical_data", methods = ["POST"])
 def post_medical_data():
-    token = token.encode('ascii', 'ignore')
-    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
+                        key="secret", algorithms=["HS256"])
     
     # validate json
     data_received = request.get_json()
