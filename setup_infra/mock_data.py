@@ -243,5 +243,5 @@ requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pa
 # add payments
 
 requests.post("{}/payments".format(base_url), json={"value":"420.42",
-            "currency":"EUR"}, headers={'Authorization':tokens["med2"]})
+            "currency":"EUR", "paymentDate": "1991-11-20", "patientUsername": "da"}, headers={'Authorization':tokens["med2"]})
 print(requests.get("{}/payments".format(base_url), headers={'Authorization':tokens["med2"]}).text)

@@ -14,6 +14,7 @@ import NotFound from './component/NotFound';
 import Register from './component/login/Register';
 import Login from './component/login/Login';
 import LoginAccButton from './component/login_acc_button/LoginAccButton';
+import Payments from './component/payments/payments';
 import useToken from './hooks/useToken';
 import PropTypes from 'prop-types';
 
@@ -37,6 +38,9 @@ class AppComponent extends Component {
               <li>
                 <Link to="/medics">Medics</Link>
               </li>
+              <li>
+                <Link to="/payments">Payments</Link>
+              </li>
             </ul>
 
             <div className="login-acc-button">
@@ -50,6 +54,7 @@ class AppComponent extends Component {
           <Route exact path="/medicalData" element={<MedicalData token={this.props.token} />}></Route>
           <Route exact path="/appointments" element={<Appointments />}></Route>
           <Route exact path="/medics" element={<Medics token={this.props.token}/>}></Route>
+          <Route exact path="/payments" element={<Payments />}></Route>
           <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
           <Route exact path="/register" element={<Register />}></Route>
           <Route path="*" element={<NotFound />}></Route>

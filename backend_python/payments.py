@@ -2,6 +2,7 @@ from flask import Blueprint, make_response, request
 from sys import stderr
 from utils import mysql, validate_json
 from models import payments, medic_details, login_details
+from datetime import datetime
 from db_ops import get_login_id
 import jwt
 
@@ -25,6 +26,8 @@ def get_payments():
             data_obj["firstName"]   = medic_details_obj.fname
             data_obj["lastName"]    = medic_details_obj.lname
             data_obj["value"]       = entry.value
+            data_obj["paymentDate"] = entry.payment_date
+            data_obj["patientUsername"] = entry.patient_username
             data_obj["currency"]    = entry.currency
             response_obj.append(data_obj)
         return make_response(response_obj, 200)
@@ -41,11 +44,17 @@ def insert_payment():
         return make_response({"message":"Bad username"}, 400)
     
     # validate json
-    if validate_json(["value", "currency"], data_received):
+    if validate_json(["value", "currency", "paymentDate", "patientUsername"], data_received):
         # create object with mandatory data
         try:
+            date = data_received["paymentDate"] + " " + \
+                str(datetime.now().strftime("%H:%M:%S"))
+            date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+            print(date.strftime('%Y-%m-%d %H:%M:%S'), file=stderr)
             new_payment = payments(medic_id = login_details.query.filter_by(id = login_id).first().id,
                                    value = data_received["value"],
+                                   payment_date = date.strftime('%Y-%m-%d %H:%M:%S'),
+                                   patient_username = data_received["patientUsername"],
                                    currency = data_received["currency"])
             mysql.session.add(new_payment)
             mysql.session.commit()
