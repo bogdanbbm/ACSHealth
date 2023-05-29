@@ -239,3 +239,9 @@ requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pa
             "donationDate":"2018-09-26"}, headers={'Authorization':tokens["med4"]})
 requests.post("{}/blood_donations".format(base_url), json={"patientUsername":"pat3",
             "donationDate":"2017-07-16"}, headers={'Authorization':tokens["med2"]})
+
+# add payments
+
+requests.post("{}/payments".format(base_url), json={"value":"420.42",
+            "currency":"EUR"}, headers={'Authorization':tokens["med2"]})
+print(requests.get("{}/payments".format(base_url), headers={'Authorization':tokens["med2"]}).text)

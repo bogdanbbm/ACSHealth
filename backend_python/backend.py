@@ -9,6 +9,7 @@ from appointments import appointments_blueprint
 from clinics import clinics_blueprint
 from personal_data import patient_data_blueprint
 from blood_donations import blood_donations_blueprint
+from payments import payments_blueprint
 
 app = Flask(__name__)
 
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     app.register_blueprint(clinics_blueprint)
     app.register_blueprint(patient_data_blueprint)
     app.register_blueprint(blood_donations_blueprint)
+    app.register_blueprint(payments_blueprint)
 
     # run app on port 5000
     app.run(host='0.0.0.0', port=5000, debug=True)
