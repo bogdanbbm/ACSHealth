@@ -39,15 +39,6 @@ Appointment.propTypes = {
 
 function MedicAppointments({ token }) {
     const [appointments, setAppointments] = useState([]);
-    const [open, setOpen] = useState(false);
-
-    const handleClose = () => {
-        setOpen(false);
-    }
-
-    const handleOpen = () => {
-        setOpen(true);
-    }
 
     useEffect(() => {
         getMedicAppointments(token)
@@ -66,14 +57,6 @@ function MedicAppointments({ token }) {
           <div className="appointments">
               {appointments.map(appointment => (
                   <Appointment appointment={appointment} />))}
-          </div>
-          <div className="add-appointment">
-              <button onClick={handleOpen}>Add appointment</button>
-              <Modal className="add-appointment-modal" open={open} onClose={handleClose}>
-                  <div className="add-appointment-modal-container">
-                      <AddAppointment token={token} closeModal={handleClose}/>
-                  </div>
-              </Modal>
           </div>
         </>
     );

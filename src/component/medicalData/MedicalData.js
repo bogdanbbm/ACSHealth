@@ -146,7 +146,7 @@ function MedicalData({token}) {
 
   return (
     <div className="data">
-      <div className={"bg"}/>
+      <div className="bg"/>
       <h1>Personal Data</h1>
       <div className="personal-data-container">
         <form onSubmit={handleSubmit}>

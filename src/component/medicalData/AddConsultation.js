@@ -16,10 +16,10 @@ async function submitConsultation(token, consultation) {
     .catch(error => console.log(error));
 }
 
-function AddConsultation({ token, closeModal }) {
+function AddConsultation({ token, closeModal, setConsultations }) {
   const [consultation, setConsultation] = useState({
     patientUsername: '',
-    date: '',
+    consultationDate: '',
     treatment: ''
   });
 
@@ -36,6 +36,7 @@ function AddConsultation({ token, closeModal }) {
       .then(response => {
         if (response.status === 201) {
           closeModal();
+          setConsultations(prevState => [...prevState, consultation])
         } else {
           console.log(response);
         }
@@ -51,8 +52,8 @@ function AddConsultation({ token, closeModal }) {
           <input type="text" id="patientusername" name="patientUsername" required onChange={onInputChange}/>
         </div>
         <div className="field">
-          <label htmlFor="date">Date</label>
-          <input type="date" id="date" name="date" required onChange={onInputChange}/>
+          <label htmlFor="consultationDate">Date</label>
+          <input type="date" id="consultationDate" name="consultationDate" required onChange={onInputChange}/>
         </div>
         <div className="field">
           <label htmlFor="treatment">Treatment</label>
@@ -68,7 +69,8 @@ function AddConsultation({ token, closeModal }) {
 
 AddConsultation.propTypes = {
   token: PropTypes.string.isRequired,
-  closeModal: PropTypes.func.isRequired
+  closeModal: PropTypes.func.isRequired,
+  setConsultations: PropTypes.func.isRequired
 }
 
 export default AddConsultation;

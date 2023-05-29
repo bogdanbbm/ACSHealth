@@ -16,9 +16,9 @@ async function submitAppointment(token, appointment) {
         .catch(error => console.log(error));
 }
 
-function AddAppointment({ token, closeModal }) {
+function AddAppointment({ token, closeModal, setAppointments }) {
     const [appointment, setAppointment] = useState({
-        patientUsername: '',
+        medicUsername: '',
         appointmentDate: '',
         clinicName: ''
     });
@@ -34,11 +34,12 @@ function AddAppointment({ token, closeModal }) {
         e.preventDefault();
         submitAppointment(token, appointment)
             .then(response => {
-                    if (response.status === 201) {
-                        closeModal();
-                    } else {
-                        console.log(response);
-                    }
+                if (response.status === 201) {
+                    closeModal();
+                    setAppointments(prevState => [...prevState, appointment]);
+                } else {
+                    console.log(response);
+                }
                 }
             );
     }
@@ -47,8 +48,8 @@ function AddAppointment({ token, closeModal }) {
         <div className="add-appointment-container">
             <form onSubmit={handeSubmit}>
                 <div className="field">
-                    <label htmlFor="patientusername">Patient Username</label>
-                    <input type="text" id="patientusername" name="patientUsername" required onChange={onInputChange}/>
+                    <label htmlFor="medicusername">Medic Username</label>
+                    <input type="text" id="medicusername" name="medicUsername" required onChange={onInputChange}/>
                 </div>
                 <div className="field">
                     <label htmlFor="appointmentDate">Appointment Date</label>
@@ -68,7 +69,8 @@ function AddAppointment({ token, closeModal }) {
 
 AddAppointment.propTypes = {
     token: PropTypes.string.isRequired,
-    closeModal: PropTypes.func.isRequired
+    closeModal: PropTypes.func.isRequired,
+    setAppointments: PropTypes.func.isRequired
 }
 
 export default AddAppointment;

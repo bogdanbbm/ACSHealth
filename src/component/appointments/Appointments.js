@@ -28,7 +28,7 @@ function Appointments({token}) {
     }
   }, [navigate, token]);
 
-  const [isMedic, setIsMedic] = useState(true);
+  const [isMedic, setIsMedic] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -44,6 +44,7 @@ function Appointments({token}) {
 
   return (
       <div className="appointments-overview">
+        <div className="bg"/>
         <h1>Your Appointments</h1>
         <div className="appointments-container">
           {isMedic ? <MedicAppointments token={token}/> : <PatientAppointments token={token}/> }

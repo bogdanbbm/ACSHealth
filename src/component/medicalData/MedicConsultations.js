@@ -71,7 +71,7 @@ function MedicConsultations({ token }) {
         <button onClick={handleOpen}>Add consultation</button>
         <Modal className="add-consultation-modal" open={open} onClose={handleClose}>
           <div className="add-consultation-modal-container">
-            <AddConsultation token={token} closeModal={handleClose}/>
+            <AddConsultation token={token} setConsultations={setConsultations} closeModal={handleClose}/>
           </div>
         </Modal>
       </div>
