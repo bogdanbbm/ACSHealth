@@ -19,7 +19,7 @@ async function getPatientAppointments(token) {
 function Appointment({ appointment }) {
 
     return (
-        <div>
+        <div className="appointment">
             <h3>{appointment.appointmentDate}</h3>
             <h4>{appointment.medicUsername}</h4>
             <p>{appointment.clinicName}</p>
@@ -50,11 +50,13 @@ function PatientAppointmens({ token }) {
     }, [token]);
 
     return (
+      <>
+        <h1>PAppointments</h1>
         <div className="appointments">
-            <h1>PAppointments</h1>
             {appointments.map(appointment => (
                 <Appointment appointment={appointment} />))}
         </div>
+      </>
     );
 }
 

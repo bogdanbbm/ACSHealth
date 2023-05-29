@@ -21,7 +21,7 @@ async function getMedicAppointments(token) {
 function Appointment({ appointment }) {
 
     return (
-        <div>
+        <div className="appointment">
             <h3>{appointment.appointmentDate}</h3>
             <h4>{appointment.patientUsername}</h4>
             <p>{appointment.clinicName}</p>
@@ -62,19 +62,19 @@ function MedicAppointments({ token }) {
 
     return (
         <>
-            <div className="appointments">
-                <h1>MAppointments</h1>
-                {appointments.map(appointment => (
-                    <Appointment appointment={appointment} />))}
-            </div>
-            <div className="add-appointment">
-                <button onClick={handleOpen}>Add appointment</button>
-                <Modal className="add-appointment-modal" open={open} onClose={handleClose}>
-                    <div className="add-appointment-modal-container">
-                        <AddAppointment token={token} closeModal={handleClose}/>
-                    </div>
-                </Modal>
-            </div>
+          <h1>MAppointments</h1>
+          <div className="appointments">
+              {appointments.map(appointment => (
+                  <Appointment appointment={appointment} />))}
+          </div>
+          <div className="add-appointment">
+              <button onClick={handleOpen}>Add appointment</button>
+              <Modal className="add-appointment-modal" open={open} onClose={handleClose}>
+                  <div className="add-appointment-modal-container">
+                      <AddAppointment token={token} closeModal={handleClose}/>
+                  </div>
+              </Modal>
+          </div>
         </>
     );
 }

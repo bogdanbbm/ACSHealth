@@ -43,7 +43,7 @@ function Appointments({token}) {
   }, [token]);
 
   return (
-      <div className="data">
+      <div className="appointments-overview">
         <h1>Your Appointments</h1>
         <div className="appointments-container">
           {isMedic ? <MedicAppointments token={token}/> : <PatientAppointments token={token}/> }
