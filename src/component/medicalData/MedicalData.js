@@ -147,8 +147,8 @@ function MedicalData({token}) {
   return (
     <div className="data">
       <div className="bg"/>
-      <h1>Personal Data</h1>
-      <div className="personal-data-container">
+      {!isMedic && <h1>Personal Data</h1>}
+      {!isMedic && <div className="personal-data-container">
         <form onSubmit={handleSubmit}>
           <div className="field">
             <label for="firstname">First Name:</label>
@@ -216,7 +216,7 @@ function MedicalData({token}) {
             {error && <span className="err">{error}</span>}
           </div>
         </form>
-      </div>
+      </div>}
       <div className="consultations-container">
         {isMedic ? <MedicConsultations token={token}/> : <PatientConsultations token={token}/> }
       </div>
