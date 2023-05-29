@@ -132,3 +132,19 @@ class blood_donation_history(mysql.Model):
     def __init__(self, patient_id, donation_date):
         self.patient_id = patient_id
         self.donation_date = donation_date
+
+class payments(mysql.Model):
+    payment_id          = mysql.Column(mysql.Integer, primary_key = True, autoincrement = True)
+    medic_id            = mysql.Column(mysql.Integer, nullable = False)
+    patient_username    = mysql.Column(mysql.String(200), nullable = False)
+    payment_date        = mysql.Column(mysql.DATE, nullable = False)
+    value               = mysql.Column(mysql.Float, nullable = False)
+    currency            = mysql.Column(mysql.String(50), nullable = False)
+
+    def __init__(self, medic_id, patient_username,  payment_date, value, currency):
+        self.medic_id   = medic_id
+        self.value      = value
+        self.patient_username = patient_username
+        self.payment_date = payment_date
+        self.currency   = currency
+        

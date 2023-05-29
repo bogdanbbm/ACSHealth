@@ -12,6 +12,7 @@ blood_donations_blueprint = Blueprint("blood_donations", __name__)
 
 @blood_donations_blueprint.route("/blood_donations", methods=["GET"])
 def get_blood_donations():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
     # get id from username and check if it exists
@@ -35,6 +36,7 @@ def get_blood_donations():
 @blood_donations_blueprint.route("/blood_donations", methods=["POST"])
 def insert_blood_donation():
     data_received = request.get_json()
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
     # get id from username and check if it exists

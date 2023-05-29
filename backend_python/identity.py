@@ -106,12 +106,14 @@ def login():
 
     # generate and return jwt for user
     print("Login successful!", file=stderr)
+    token = token.encode('ascii', 'ignore')
     token = jwt.encode(payload={"username":user.username}, key="secret")
     return make_response({'token' : token}, 201)
 
 
 @identity_blueprint.route("/has_completed", methods=["GET"])
 def has_completed():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id for provided username to check if it exists
@@ -127,6 +129,7 @@ def has_completed():
 
 @identity_blueprint.route("/is_medic", methods=["GET"])
 def is_medic():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id for provided username to check if it exists
