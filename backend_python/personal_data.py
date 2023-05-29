@@ -10,6 +10,7 @@ patient_data_blueprint = Blueprint("patient_data", __name__)
 
 @patient_data_blueprint.route('/patient_data', methods=["GET"])
 def get_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
     # get id from username and check if it exists
@@ -48,6 +49,7 @@ def get_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["POST"])
 def insert_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     data_received = request.get_json()
@@ -104,6 +106,7 @@ def insert_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["PATCH"])
 def update_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     data_received = request.get_json()
 
@@ -137,6 +140,7 @@ def update_personal_data():
 @patient_data_blueprint.route("/patient_data/allergies", methods=["POST"])
 def insert_allergy():
     data_received = request.get_json()
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id from username and check if it exists

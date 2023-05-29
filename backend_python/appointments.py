@@ -12,6 +12,7 @@ appointments_blueprint = Blueprint("appointments", __name__)
 
 @appointments_blueprint.route("/appointments", methods=["GET"])
 def get_appointments():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id for user and verify if it exists
@@ -59,6 +60,7 @@ def get_appointments():
 
 @appointments_blueprint.route("/appointments", methods=["POST"])
 def create_appointment():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # validate json

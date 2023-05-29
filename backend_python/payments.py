@@ -10,6 +10,7 @@ payments_blueprint = Blueprint("payments", __name__)
 
 @payments_blueprint.route('/payments', methods = ["GET"])
 def get_payments():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
      # get id from username and check if it exists
@@ -35,6 +36,7 @@ def get_payments():
 
 @payments_blueprint.route('/payments', methods = ["POST"])
 def insert_payment():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     data_received = request.get_json()

@@ -32,6 +32,7 @@ def get_medic_details():
 
 @medic_blueprint.route("/medic_list", methods = ["POST"])
 def post_medic_details():
+        token = token.encode('ascii', 'ignore')
         token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
         # validate json

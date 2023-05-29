@@ -141,8 +141,10 @@ class payments(mysql.Model):
     value               = mysql.Column(mysql.Float, nullable = False)
     currency            = mysql.Column(mysql.String(50), nullable = False)
 
-    def __init__(self, medic_id, value, currency):
+    def __init__(self, medic_id, patient_username,  payment_date, value, currency):
         self.medic_id   = medic_id
         self.value      = value
+        self.patient_username = patient_username
+        self.payment_date = payment_date
         self.currency   = currency
         
