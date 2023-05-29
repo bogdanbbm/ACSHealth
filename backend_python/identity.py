@@ -106,8 +106,7 @@ def login():
 
     # generate and return jwt for user
     print("Login successful!", file=stderr)
-    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
-                        key="secret", algorithms=["HS256"])
+    token = jwt.encode(payload={"username":user.username}, key="secret")
     return make_response({'token' : token}, 201)
 
 

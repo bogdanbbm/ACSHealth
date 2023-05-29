@@ -1,5 +1,5 @@
 from flask import Blueprint, make_response, request
-from models import patient_data, allergy_list, login_details
+from models import patient_data, login_details
 from utils import mysql, validate_json
 from db_ops import get_login_id
 from sys import stderr
@@ -35,13 +35,8 @@ def get_personal_data():
             data_obj["bloodGroup"] = data.sgroup
         if data.rh is not None:
             data_obj["RH"] = data.rh
-
-        # add allergy list to the object
-        allergy_res = allergy_list.query.filter_by(patient_id=login_id).all()
-        allergies = []
-        for allergy in allergy_res:
-            allergies.append({"allergy":allergy.allergy})
-        data_obj["allergies"] = allergies
+        if data.allergies is not None:
+            data_obj["allergies"] = data.allergies
 
         return make_response(data_obj, 200)
     return make_response({}, 204)
@@ -51,7 +46,6 @@ def get_personal_data():
 def insert_personal_data():
     token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
                         key="secret", algorithms=["HS256"])
-
     data_received = request.get_json()
     personal_data = None
 
@@ -88,6 +82,8 @@ def insert_personal_data():
 
     # check if any optional data has been completed
     try:
+        if validate_json(["allergies"], data_received):
+            pers.allergies = data_received["allergies"]
         if validate_json(["weight"], data_received):
             pers.weight = float(data_received["weight"])
         if validate_json(["height"], data_received):
@@ -122,6 +118,8 @@ def update_personal_data():
 
     # update values for received optional fields
     try:
+        if validate_json(["allergies"], data_received):
+            pers.allergies = data_received["allergies"]
         if validate_json(["weight"], data_received):
             pers.weight = float(data_received["weight"])
         if validate_json(["height"], data_received):
@@ -136,29 +134,3 @@ def update_personal_data():
         return make_response({"message":"Database update error"}, 500)
     
     return make_response({"message":"Successfully updated patient data"}, 200)
-
-@patient_data_blueprint.route("/patient_data/allergies", methods=["POST"])
-def insert_allergy():
-    data_received = request.get_json()
-    token = jwt.decode(jwt=request.headers.get('Authorization').split(" ")[1],
-                        key="secret", algorithms=["HS256"])
-
-    # get id from username and check if it exists
-    login_id = get_login_id(token.get('username'))
-    if login_id == -1:
-        return make_response({"message":"Bad username"}, 400)
-    
-    # validate json
-    if not validate_json(["allergy"], data_received):
-        return make_response({"message":"Invalid JSON"}, 400)
-
-    # insert allergy into database
-    try:
-        allergy = allergy_list(login_id, data_received["allergy"])
-        mysql.session.add(allergy)
-        mysql.session.commit()
-    except Exception as e:
-        print(e, file=stderr)
-        return make_response({"message":"Database insertion error"}, 500)
-    
-    return make_response({"message":"Successfully added allergy"}, 201)
