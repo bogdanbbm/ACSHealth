@@ -10,6 +10,7 @@ import Home from './component/home/Home';
 import MedicalData from './component/medicalData/MedicalData';
 import Appointments from './component/appointments/Appointments';
 import Medics from './component/medics/Medics';
+import Payments from './component/payments/Payments';
 import NotFound from './component/NotFound';
 import Register from './component/login/Register';
 import Login from './component/login/Login';
@@ -36,6 +37,9 @@ class AppComponent extends Component {
                 <Link to="/appointments">Appointments</Link>
               </li>
               <li>
+                <Link to="/payments">Payments</Link>
+              </li>
+              <li>
                 <Link to="/medics">Medics</Link>
               </li>
               <li>
@@ -53,9 +57,9 @@ class AppComponent extends Component {
           <Route exact path="/" element={<Home />}></Route>
           <Route exact path="/medicalData" element={<MedicalData token={this.props.token} />}></Route>
           <Route exact path="/appointments" element={<Appointments token={this.props.token} />}></Route>
-          <Route exact path="/medics" element={<Medics token={this.props.token}/>}></Route>
           <Route exact path="/payments" element={<Payments token={this.props.token}/>}></Route>
-          <Route exact path="/login" element={<Login  setToken={this.props.setToken}/>}></Route>
+          <Route exact path="/medics" element={<Medics token={this.props.token}/>}></Route>
+          <Route exact path="/login" element={<Login setToken={this.props.setToken}/>}></Route>
           <Route exact path="/register" element={<Register />}></Route>
           <Route path="*" element={<NotFound />}></Route>
         </Routes>

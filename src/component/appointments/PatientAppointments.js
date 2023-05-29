@@ -30,14 +30,14 @@ function Appointment({appointment}) {
 }
 
 Appointment.propTypes = {
-  consultation: PropTypes.shape({
+  appointment: PropTypes.shape({
     appointmentDate: PropTypes.string.isRequired,
     medicUsername: PropTypes.string.isRequired,
     clinicName: PropTypes.string.isRequired
   })
 }
 
-function PatientAppointmens({token}) {
+function PatientAppointments({token}) {
   const [appointments, setAppointments] = useState([]);
 
   const [open, setOpen] = useState(false);
@@ -79,8 +79,8 @@ function PatientAppointmens({token}) {
   );
 }
 
-PatientAppointmens.propTypes = {
+PatientAppointments.propTypes = {
   token: PropTypes.string.isRequired
 }
 
-export default PatientAppointmens;
+export default PatientAppointments;

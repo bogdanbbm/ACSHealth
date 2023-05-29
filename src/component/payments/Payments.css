@@ -39,14 +39,14 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 60%;
+    height: 110%;
 }
 
 .payments {
     display: grid;
     grid-auto-flow: column;
     grid-template-columns: repeat(auto-fit, 175px);
-    grid-template-rows: repeat(auto-fit, 325px);
+    grid-template-rows: repeat(auto-fit, minmax(175px, 1fr));
     align-items: center;
     grid-gap: 5rem;
     padding: 10px 20px;

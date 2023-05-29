@@ -18,12 +18,10 @@ async function submitPayment(token, payment) {
 
 function AddPayment({token, closeModal, setPayments}) {
   const [payment, setPayment] = useState({
-    firstName: '',
-    lastName: '',
-    value: 0.0,
+    value: 0,
+    currency: '',
     paymentDate: '',
-    patientUsername: '',
-    currency: ''
+    patientUsername: ''
   });
 
   const onInputChange = e => {
@@ -51,24 +49,23 @@ function AddPayment({token, closeModal, setPayments}) {
     <div className="add-payment-container">
       <form onSubmit={handeSubmit}>
         <div className="field">
-          <label htmlFor="patientUsername">Patient Username</label>
-          <input type="text" id="patientUsername" name="patientUsername" required onChange={onInputChange}/>
+          <label htmlFor="value">Value</label>
+          <input type="number" min="0" id="value" name="value" required onChange={onInputChange}/>
+        </div>
+        <div className="field">
+          <label htmlFor="currency">Currency</label>
+          <input type="text" id="currency" name="currency" required onChange={onInputChange}/>
         </div>
         <div className="field">
           <label htmlFor="paymentDate">Payment Date</label>
           <input type="date" id="paymentDate" name="paymentDate" required onChange={onInputChange}/>
         </div>
         <div className="field">
-          <label htmlFor="currency">Currency Name</label>
-          <input className="currency-text" id="currency" name="currency" required
-                    onChange={onInputChange}/>
+          <label htmlFor="patientUsername">Patient Username</label>
+          <input type="text" id="patientUsername" name="patientUsername" required onChange={onInputChange}/>
         </div>
         <div className="field">
-          <label htmlFor="value">Value</label>
-          <input type="text" id="value" name="value" required onChange={onInputChange}/>
-        </div>
-        <div className="field">
-          <button type="submit">Add payment</button>
+          <button type="submit">Add Payment</button>
         </div>
       </form>
     </div>
@@ -78,7 +75,7 @@ function AddPayment({token, closeModal, setPayments}) {
 AddPayment.propTypes = {
   token: PropTypes.string.isRequired,
   closeModal: PropTypes.func.isRequired,
-  setpayments: PropTypes.func.isRequired
+  setPayments: PropTypes.func.isRequired
 }
 
 export default AddPayment;
