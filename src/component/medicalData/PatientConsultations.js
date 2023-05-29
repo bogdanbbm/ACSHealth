@@ -19,7 +19,7 @@ async function getPatientConsultations(token) {
 function Consultation({ consultation }) {
 
   return (
-    <div>
+    <div className="consultation">
       <h3>{consultation.date}</h3>
       <h4>{consultation.medicName}</h4>
       <p>{consultation.treatment}</p>
@@ -50,11 +50,13 @@ function PatientConsultations({ token }) {
   }, [token]);
 
   return (
-    <div className="consultations">
-      <h1>PConsultations</h1>
-      {consultations.map(consultation => (
-        <Consultation consultation={consultation} />))}
-    </div>
+    <>
+      <h1 className="consultations-h1">PConsultations</h1>
+      <div className="consultations">
+        {consultations.map(consultation => (
+          <Consultation consultation={consultation} />))}
+      </div>
+    </>
   );
 }
 
