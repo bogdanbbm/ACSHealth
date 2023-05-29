@@ -138,4 +138,4 @@ def is_medic():
     
     user = login_details.query.filter_by(id=login_id).first()
     med = True if user.is_medic == 'Y' else False
-    return make_response(med, 200)
+    return make_response({"isMedic":med}, 200)
