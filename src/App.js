@@ -15,6 +15,7 @@ import NotFound from './component/NotFound';
 import Register from './component/login/Register';
 import Login from './component/login/Login';
 import LoginAccButton from './component/login_acc_button/LoginAccButton';
+import Payments from './component/payments/Payments';
 import useToken from './hooks/useToken';
 import PropTypes from 'prop-types';
 
@@ -40,6 +41,9 @@ class AppComponent extends Component {
               </li>
               <li>
                 <Link to="/medics">Medics</Link>
+              </li>
+              <li>
+                <Link to="/payments">Payments</Link>
               </li>
             </ul>
 

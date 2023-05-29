@@ -16,7 +16,6 @@ async function checkIfMedic(token) {
   })
     .then(response => response)
     .catch(error => console.log(error));
-}
 
 function Payments({token}) {
   const navigate = useNavigate();

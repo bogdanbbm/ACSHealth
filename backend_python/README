@@ -1,0 +1,89 @@
+        New endpoints: (adica cam tot fara register si login :P)
+
+    -- identity --
+
+GET /has_completed returneaza {"completed": 0 sau 1}
+
+
+    -- images --
+
+GET /images/<timestamp> returneaza poza
+POST /images/<timestamp> nu sunt sigur, intrebati-l pe Ion
+Ion: Returneaza un mesaj de "Image uploaded successfully", cu cod 201 :)))
+
+
+    -- medics --
+
+GET /medic_list returneaza o lista cu chestii de forma {"firstName": prenume, "lastName": nume,
+                                                        "rating": media rating-urilor de la reviews sau 0 daca nu exista reviews,
+                                                        "username": username-ul medicului,
+                                                        "imageStamp": string cu timestamp-ul pozei}
+POST /medic_list primeste {"firstName":..., "lastName":...} si returneaza timestamp-ul generat pt medicul respectiv
+    obs: timestamp-ul il returneaza si GET pentru toti medicii deci poate fi luat de acolo
+
+
+    -- reviews --
+
+GET /medic_reviews/<medic_username> returneaza o lista de {"review": string, "rating": float, "idReview": int}
+    obs: idReview poate fi folosit dupa pentru a sterge un review cu DELETE
+POST /medic_reviews/<medic_username> primeste {"review": string, "rating": float}
+DELETE /medic_reviews/<idReview> sterge review-ul cu id-ul idReview
+
+
+    -- consultations --
+
+GET /medical_data returneaza o lista de {"medicName": string, "consultationDate": string, "treatment": string}
+POST /medical_data primeste {"patientUsername": username pacient, "treatment": string, "consultationDate": string}
+    obs: consultationDate trebuie sa fie in formatul "dd/mm/yyyy" ex: "21/07/1998"
+    obs 2: Trebuie sa fii logat ca medic ca sa postezi o consultatie
+            (verific si pe backend asta just in case, dar nu ar trebui sa apara deloc optiunea pe frontend)
+
+
+    -- personal data --
+
+GET /patient_data returneaza un obiect de forma {"firstName": string, "lastName": string,
+                                                 "CNP": string, "gender": "M" sau "F", "birthdate": string,
+                                                 "allergies": LISTA de alergii posibil goala daca nu exista,
+                                                 OPTIONAL: "height": float, "weight": float, "sanguineGroup": string, "RH": string}
+    obs: ce e la OPTIONAL poate sa lipseasca complet din json
+POST /patient_data primeste un json care contine neaparat {"firstName", "lastName",
+                                                           "CNP", "birthdate", "gender"}
+                    si POATE sa contina si unul sau mai multe dintre "weight", "height", "RH", "sanguineGroup"
+PATCH /patient_data primeste un json cu unul sau mai multe dintre "weight", "height", "RH", "sanguineGroup"
+    obs: La cum am implementat pe moment datele obligatorii nu se mai pot modifica, ar fi mai complicat altfel
+POST /patient_data/allergies primeste {"allergy": string}
+
+
+    -- clinici --
+
+GET /clinics returneaza o lista de {"clinicName": string}
+POST /clinics nu cred ca ar trebui sa folosim din frontend, mai degraba cred ca populam de dinainte cu clinici
+
+
+    -- programari --
+
+GET /appointments returneaza o lista de {"idAppointment": int, "medicUsername": string,
+                                         "clinicName": string, "appointmentDate": string}
+    obs: idAppointment o sa fie folosit pentru modificarea/stergerea appointment-ului
+POST /appointments primeste {"clinicName": string, "medicUsername": string, "appointmentDate": string}
+    obs: data e in acelasi format ca mai sus, "dd/mm/yyyy"
+PATCH /appointments/<idAppointment> primeste {"apointmentDate"}
+DELETE /appointments/<idAppointment> sterge review-ul cu id-ul idAppointment
+
+
+    -- blood donations --
+
+GET /blood_donations returneaza o lista de {"donationDate": string}
+POST /blood_donations o sa primeasca {"patientUsername": string, "donationDate": string}
+    obs: Trebuie sa fii logat ca medic ca sa postezi blood donation
+        (verific si pe backend asta just in case, dar nu ar trebui sa apara deloc optiunea pe frontend)
+    obs 2: data trimisa de pe frontend trebuie tot in formatul "dd/mm/yyyy"
+
+    -- payments
+
+GET /payments returneaza o lista de plati de {"firstName": string, "lastName": string, "value": float,
+"paymentDate": string, "patientUsername": string, "currency": string}
+POST /payments o sa primeasca {"value": float, "currency": string, "paymentDate": string,
+"patientUsername": string}
+    obs: Trebuie sa fii logat ca medic ca sa poti face o plata
+    obs 2: data trimisa de pe frontend trebuie tot in formatul "dd/mm/yyyy"
