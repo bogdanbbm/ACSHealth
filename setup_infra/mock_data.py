@@ -49,25 +49,25 @@ tok = open("tokens.txt", "w")
 
 tokens = {}
 
-tokens["med1"] = requests.post("{}/login".format(base_url),
+tokens["med1"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "med1", "password": "da"}).json()["token"]
 tok.write("med1 -> "+tokens["med1"]+'\n')
-tokens["med2"] = requests.post("{}/login".format(base_url),
+tokens["med2"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "med2", "password": "da"}).json()["token"]
 tok.write("med2 -> "+tokens["med2"]+'\n')
-tokens["med3"] = requests.post("{}/login".format(base_url),
+tokens["med3"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "med3", "password": "da"}).json()["token"]
 tok.write("med3 -> "+tokens["med3"]+'\n')
-tokens["med4"] = requests.post("{}/login".format(base_url),
+tokens["med4"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "med4", "password": "da"}).json()["token"]
 tok.write("med4 -> "+tokens["med4"]+'\n')
-tokens["pat1"] = requests.post("{}/login".format(base_url),
+tokens["pat1"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "pat1", "password": "nu"}).json()["token"]
 tok.write("pat1 -> "+tokens["pat1"]+'\n')
-tokens["pat2"] = requests.post("{}/login".format(base_url),
+tokens["pat2"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "pat2", "password": "nu"}).json()["token"]
 tok.write("pat2 -> "+tokens["pat2"]+'\n')
-tokens["pat3"] = requests.post("{}/login".format(base_url),
+tokens["pat3"] = "Bearer "+requests.post("{}/login".format(base_url),
                json={"username": "pat3", "password": "nu"}).json()["token"]
 tok.write("pat3 -> "+tokens["pat3"]+'\n')
 
@@ -135,25 +135,16 @@ requests.post("{}/medic_reviews/med4".format(base_url), json={"review":"Super in
 
 requests.post("{}/patient_data".format(base_url), json={"firstName": "Mircea",
             "lastName": "Mircea", "birthdate":"1991-11-20", "sex":"M",
-            "cnp":"1245638964215", "weight":float(71.55)}, 
+            "cnp":"1245638964215", "weight":float(71.55), "allergies":"cats"}, 
             headers={'Authorization':tokens["pat1"]})
 requests.post("{}/patient_data".format(base_url), json={"firstName": "Ginela",
             "lastName": "Marinescu", "birthdate":"1992-09-12", "sex":"F",
-            "cnp":"975463864125", "height":float(1.63)}, 
+            "cnp":"975463864125", "height":float(1.63), "allergies":"dust"}, 
             headers={'Authorization':tokens["pat2"]})
 requests.post("{}/patient_data".format(base_url), json={"firstName": "Vasile",
             "lastName": "Vasile", "birthdate":"1994-06-21", "sex":"M",
-            "cnp":"5268974513875", "RH":"P", "bloodGroup":"A"}, 
+            "cnp":"5268974513875", "RH":"P", "bloodGroup":"A", "allergies":"nuts, bees"}, 
             headers={'Authorization':tokens["pat3"]})
-
-requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"bees"},
-              headers={'Authorization':tokens["pat3"]})
-requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"nuts"},
-              headers={'Authorization':tokens["pat3"]})
-requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"dust"},
-              headers={'Authorization':tokens["pat2"]})
-requests.post("{}/patient_data/allergies".format(base_url), json={"allergy":"cats"},
-              headers={'Authorization':tokens["pat1"]})
 
 # add clinics
 

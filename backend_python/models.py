@@ -104,6 +104,7 @@ class patient_data(mysql.Model):
     weight = mysql.Column(mysql.Float)
     sgroup = mysql.Column(mysql.String(2))
     rh = mysql.Column(mysql.String(1))
+    allergies = mysql.Column(mysql.String(255))
 
     def __init__(self, id, first_name, last_name, cnp, birthdate, gender):
         self.id = id
@@ -114,16 +115,6 @@ class patient_data(mysql.Model):
         self.gender = gender
 
 
-class allergy_list(mysql.Model):
-    entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
-    patient_id = mysql.Column(mysql.Integer, nullable=False)
-    allergy = mysql.Column(mysql.String(50), nullable=False)
-
-    def __init__(self, patient_id, allergy):
-        self.patient_id = patient_id
-        self.allergy = allergy
-
-
 class blood_donation_history(mysql.Model):
     entry_id = mysql.Column(mysql.Integer, primary_key=True, autoincrement=True)
     patient_id = mysql.Column(mysql.Integer, nullable=False)
@@ -132,6 +123,7 @@ class blood_donation_history(mysql.Model):
     def __init__(self, patient_id, donation_date):
         self.patient_id = patient_id
         self.donation_date = donation_date
+
 
 class payments(mysql.Model):
     payment_id          = mysql.Column(mysql.Integer, primary_key = True, autoincrement = True)
