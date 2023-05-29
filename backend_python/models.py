@@ -34,16 +34,14 @@ class medic_details(mysql.Model):
     fname = mysql.Column(mysql.String(255), default = " ")
     lname = mysql.Column(mysql.String(255), default = " ")
     rating = mysql.Column(mysql.Float)
-    clinic_id = mysql.Column(mysql.Integer)
     image_stamp = mysql.Column(mysql.TIMESTAMP, nullable=False)
 
-    def __init__(self, id, fname, lname, rating, image_stamp, clinic_id):
+    def __init__(self, id, fname, lname, rating, image_stamp):
         self.id = id
         self.fname = fname
         self.lname = lname
         self.rating = rating
         self.image_stamp = image_stamp
-        self.clinic_id = clinic_id
 
 
 class reviews(mysql.Model):
@@ -134,3 +132,19 @@ class blood_donation_history(mysql.Model):
     def __init__(self, patient_id, donation_date):
         self.patient_id = patient_id
         self.donation_date = donation_date
+
+class payments(mysql.Model):
+    payment_id          = mysql.Column(mysql.Integer, primary_key = True, autoincrement = True)
+    medic_id            = mysql.Column(mysql.Integer, nullable = False)
+    patient_username    = mysql.Column(mysql.String(200), nullable = False)
+    payment_date        = mysql.Column(mysql.DATE, nullable = False)
+    value               = mysql.Column(mysql.Float, nullable = False)
+    currency            = mysql.Column(mysql.String(50), nullable = False)
+
+    def __init__(self, medic_id, patient_username,  payment_date, value, currency):
+        self.medic_id   = medic_id
+        self.value      = value
+        self.patient_username = patient_username
+        self.payment_date = payment_date
+        self.currency   = currency
+        

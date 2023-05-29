@@ -106,12 +106,14 @@ def login():
 
     # generate and return jwt for user
     print("Login successful!", file=stderr)
+    token = token.encode('ascii', 'ignore')
     token = jwt.encode(payload={"username":user.username}, key="secret")
     return make_response({'token' : token}, 201)
 
 
 @identity_blueprint.route("/has_completed", methods=["GET"])
 def has_completed():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id for provided username to check if it exists
@@ -123,3 +125,18 @@ def has_completed():
     user = login_details.query.filter_by(id=login_id).first()
     completed = 1 if user.completed_reg == 'Y' else 0
     return make_response({"completed":completed}, 200)
+
+
+@identity_blueprint.route("/is_medic", methods=["GET"])
+def is_medic():
+    token = token.encode('ascii', 'ignore')
+    token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
+
+    # get id for provided username to check if it exists
+    login_id = get_login_id(token.get('username'))
+    if login_id == -1:
+        return make_response({"message":"Bad username"}, 400)
+    
+    user = login_details.query.filter_by(id=login_id).first()
+    med = True if user.is_medic == 'Y' else False
+    return make_response(med, 200)

@@ -10,6 +10,7 @@ patient_data_blueprint = Blueprint("patient_data", __name__)
 
 @patient_data_blueprint.route('/patient_data', methods=["GET"])
 def get_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
     # get id from username and check if it exists
@@ -23,15 +24,15 @@ def get_personal_data():
         data_obj = {}
         data_obj["firstName"] = data.first_name
         data_obj["lastName"] = data.last_name
-        data_obj["CNP"] = data.cnp
-        data_obj["gender"] = data.gender
+        data_obj["cnp"] = data.cnp
+        data_obj["sex"] = data.gender
         data_obj["birthdate"] = str(data.birthdate)
         if data.height is not None:
             data_obj["height"] = data.height
         if data.weight is not None:
             data_obj["weight"] = data.weight
         if data.sgroup is not None:
-            data_obj["sanguineGroup"] = data.sgroup
+            data_obj["bloodGroup"] = data.sgroup
         if data.rh is not None:
             data_obj["RH"] = data.rh
 
@@ -48,6 +49,7 @@ def get_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["POST"])
 def insert_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     data_received = request.get_json()
@@ -59,16 +61,16 @@ def insert_personal_data():
         return make_response({"message":"Bad username"}, 400)
     
     # validate json
-    if validate_json(["firstName", "lastName", "CNP", "gender", "birthdate"], data_received):
+    if validate_json(["firstName", "lastName", "cnp", "sex", "birthdate"], data_received):
         # create object with mandatory data
         try:
-            date = datetime.strptime(data_received["birthdate"], "%d/%m/%Y")
+            date = datetime.strptime(data_received["birthdate"], "%Y-%m-%d")
             personal_data = patient_data(login_id,
                                         data_received["firstName"],
                                         data_received["lastName"],
-                                        data_received["CNP"],
+                                        data_received["cnp"],
                                         date.strftime('%Y-%m-%d %H:%M:%S'),
-                                        data_received["gender"])
+                                        data_received["sex"])
             mysql.session.add(personal_data)
 
             pat = login_details.query.filter_by(id=login_id).first()
@@ -90,8 +92,8 @@ def insert_personal_data():
             pers.weight = float(data_received["weight"])
         if validate_json(["height"], data_received):
             pers.height = float(data_received["height"])
-        if validate_json(["sanguineGroup"], data_received):
-            pers.sgroup = data_received["sanguineGroup"]
+        if validate_json(["bloodGroup"], data_received):
+            pers.sgroup = data_received["bloodGroup"]
         if validate_json(["RH"], data_received):
             pers.rh = data_received["RH"]
         mysql.session.commit()
@@ -104,6 +106,7 @@ def insert_personal_data():
 
 @patient_data_blueprint.route("/patient_data", methods=["PATCH"])
 def update_personal_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     data_received = request.get_json()
 
@@ -123,8 +126,8 @@ def update_personal_data():
             pers.weight = float(data_received["weight"])
         if validate_json(["height"], data_received):
             pers.height = float(data_received["height"])
-        if validate_json(["sanguineGroup"], data_received):
-            pers.sgroup = data_received["sanguineGroup"]
+        if validate_json(["bloodGroup"], data_received):
+            pers.sgroup = data_received["bloodGroup"]
         if validate_json(["RH"], data_received):
             pers.rh = data_received["RH"]
         mysql.session.commit()
@@ -137,6 +140,7 @@ def update_personal_data():
 @patient_data_blueprint.route("/patient_data/allergies", methods=["POST"])
 def insert_allergy():
     data_received = request.get_json()
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id from username and check if it exists

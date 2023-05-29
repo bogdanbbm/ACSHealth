@@ -37,7 +37,7 @@ def post_images(timestamp):
     # query database for the corresponding medic
     medic = medic_details.query.filter_by(image_stamp=timestamp).first()
     medic_id = -1
-    if medic.id is not None:
+    if medic is not None:
         medic_id = medic.id
     # if medic does not exist, don't upload photo
     if medic_id == -1:

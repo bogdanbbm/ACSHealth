@@ -13,12 +13,29 @@ medical_data_blueprint = Blueprint("medical_data", __name__)
 
 @medical_data_blueprint.route("/medical_data", methods = ["GET"])
 def get_medical_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
 
     # get id for provided username to check if it exists
     login_id = get_login_id(token.get('username'))
     if login_id == -1:
         return make_response({"message": "Bad username"}, 400)
+    
+    # check if medic and return appropriate consultation list if that is the case
+    user = login_details.query.filter_by(username=token.get('username')).first()
+    if user is not None and user.is_medic == 'Y':
+        cons_ress = consultations.query.filter_by(id_medic=login_id).all()
+        if cons_ress == []:
+            return make_response({}, 204)
+        
+        cons_l = []
+        for cons in cons_ress:
+            # compute list of consultations and return it
+            pat = login_details.query.filter_by(id=cons.id_patient).first()
+            cons_l.append({"patientUsername": pat.username,
+                            "consultationDate":str(cons.consult_date), "treatment":cons.treatment})
+            
+        return make_response(dumps(cons_l), 200)
 
     # query database for all consultations for the patient
     cons_res = consultations.query.filter_by(id_patient=login_id).all()
@@ -32,12 +49,7 @@ def get_medical_data():
         med = login_details.query.filter_by(id=cons.id_medic).first()
         # if at any point a medic for one of the consultations hasn't completed
         # the registration process return an error
-        if med.completed_reg == 'N':
-            return make_response(dumps({"message": "Medic has not completed personal data"}), 400)
-        
-        medd = medic_details.query.filter_by(id=cons.id_medic).first()
-        med_name = medd.fname + " " + medd.lname
-        cons_list.append({"medicName": med_name,
+        cons_list.append({"medicUsername": med.username,
                           "consultationDate":str(cons.consult_date), "treatment":cons.treatment})
     
     return make_response(dumps(cons_list), 200)
@@ -45,6 +57,7 @@ def get_medical_data():
 
 @medical_data_blueprint.route("/medical_data", methods = ["POST"])
 def post_medical_data():
+    token = token.encode('ascii', 'ignore')
     token = jwt.decode(jwt=request.headers.get('Authorization'), key="secret", algorithms=["HS256"])
     
     # validate json
@@ -70,7 +83,7 @@ def post_medical_data():
     
     # insert consultation into database
     try:
-        date = datetime.strptime(data_received["consultationDate"], "%d/%m/%Y")
+        date = datetime.strptime(data_received["consultationDate"], "%Y-%m-%d")
         cons = consultations(login_id, patient_id, date.strftime('%Y-%m-%d %H:%M:%S'),
                             data_received["treatment"])
         mysql.session.add(cons)
