@@ -2,10 +2,9 @@ import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import PatientAppointments from './PatientAppointments';
-import MedicAppointments from './MedicAppointments';
-import './Appointments.css';
-
+import PatientPayments from './PatientPayments';
+import MedicPayments from './MedicPayments';
+import './Payments.css';
 async function checkIfMedic(token) {
   const apiURL = process.env.REACT_APP_API_URL;
 
@@ -19,7 +18,7 @@ async function checkIfMedic(token) {
     .catch(error => console.log(error));
 }
 
-function Appointments({token}) {
+function Payments({token}) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -42,18 +41,18 @@ function Appointments({token}) {
   }, [token]);
 
   return (
-    <div className="appointments-overview">
+    <div className="payments-overview">
       <div className="bg"/>
-      <h1>Your Appointments</h1>
-      <div className="appointments-container">
-        {isMedic ? <MedicAppointments token={token}/> : <PatientAppointments token={token}/>}
+      <h1>Your Payments</h1>
+      <div className="payments-container">
+        {isMedic ? <MedicPayments token={token}/> : <PatientPayments token={token}/> }
       </div>
     </div>
   );
 }
 
-Appointments.propTypes = {
+Payments.propTypes = {
   token: PropTypes.string.isRequired
 };
 
-export default Appointments;
+export default Payments;
